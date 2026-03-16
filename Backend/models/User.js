@@ -3,10 +3,9 @@ import { createHash } from 'crypto';
 
 export function createModel(database) {
     database.define('User', {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+        username: {
+            type: DataTypes.STRING,
+            primaryKey: true
         },
         password: {
             type: DataTypes.STRING,
@@ -21,6 +20,10 @@ export function createModel(database) {
                     this.setDataValue('password', null);
                 }
             }
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
         }
     }, { timestamps: false });
 }

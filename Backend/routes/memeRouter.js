@@ -1,0 +1,57 @@
+import express from "express";
+import { MemeController } from "../controllers/MemeController.js";
+// Commentati poiché i middleware non sono ancora stati creati nel progetto
+// import { userContextMiddleware } from "../middleware/authMiddleware.js";
+// import { validateParamId, validateBody } from "../middleware/validationMiddleware.js";
+
+export const memeRouter = express.Router();
+
+// CREATE: Crea un nuovo meme
+memeRouter.post("/",
+    // userContextMiddleware,
+    // validateBody('memeCreateSchema'), // Validazione payload per la creazione
+    (req, res, next) => {
+        MemeController.createMeme(req.body, req.userId)
+            .then(newMeme => res.status(201).json(newMeme))
+            .catch(next);
+    });
+
+// READ: Ottieni tutti i meme
+memeRouter.get("/",
+    (req, res, next) => {
+        MemeController.getAllMemes(req.query)
+            .then(memes => res.json(memes))
+            .catch(next);
+    });
+
+// READ: Ottieni un singolo meme tramite ID
+memeRouter.get("/:memeId",
+    // validateParamId('memeId'), // Validazione ID meme
+    (req, res, next) => {
+        MemeController.getMemeById(req.params.memeId)
+            .then(meme => res.json(meme))
+            .catch(next);
+    });
+
+// UPDATE: Aggiorna un meme esistente (es. titolo, file, etc)
+memeRouter.put("/:memeId",
+    // userContextMiddleware,
+    // validateParamId('memeId'),
+    // validateBody('memeUpdateSchema'),
+    (req, res, next) => {
+        MemeController.updateMeme(req.params.memeId, req.body, req.userId)
+            .then(updatedMeme => res.json(updatedMeme))
+            .catch(next);
+    });
+
+// DELETE: Elimina un meme
+memeRouter.delete("/:memeId",
+    // userContextMiddleware,
+    // validateParamId('memeId'),
+    (req, res, next) => {
+        MemeController.deleteMeme(req.params.memeId, req.userId)
+            .then(result => res.json(result))
+            .catch(next);
+    });
+
+
