@@ -4,7 +4,8 @@ import morgan from "morgan";
 import cors from "cors";
 import { initDatabase } from "./models/Database.js";
 import { memeRouter } from "./routes/memeRouter.js";
-
+import { authRouter } from "./routes/authRouter.js";
+import path from "path";
 import 'dotenv/config.js';
 
 initDatabase();
@@ -21,6 +22,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/meme", memeRouter);
+app.use("/auth", authRouter);
+app.use("/images", express.static(path.join(process.cwd(), "images")));
 
 //error handler
 app.use((err, req, res, next) => {

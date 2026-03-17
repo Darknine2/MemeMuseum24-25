@@ -1,5 +1,7 @@
 import express from "express";
 import { MemeController } from "../controllers/MemeController.js";
+import { uploadMemePhoto } from "../middleware/uploadPhoto.js";
+import { enforceAuthentication } from "../middleware/authorization.js";
 // Commentati poiché i middleware non sono ancora stati creati nel progetto
 // import { userContextMiddleware } from "../middleware/authMiddleware.js";
 // import { validateParamId, validateBody } from "../middleware/validationMiddleware.js";
@@ -8,10 +10,20 @@ export const memeRouter = express.Router();
 
 // CREATE: Crea un nuovo meme
 memeRouter.post("/",
-    // userContextMiddleware,
+    uploadMemePhoto.single("image"),
+    enforceAuthentication,
     // validateBody('memeCreateSchema'), // Validazione payload per la creazione
     (req, res, next) => {
-        MemeController.createMeme(req.body, req.userId)
+
+        if (!req.file) {
+            const error = new Error("No file uploaded");
+            error.status = 400;
+            throw error;
+        }
+
+        const memeData = JSON.parse(req.body.memeBody);
+
+        MemeController.createMeme(memeData, req.username, req.file)
             .then(newMeme => res.status(201).json(newMeme))
             .catch(next);
     });
@@ -35,21 +47,31 @@ memeRouter.get("/:memeId",
 
 // UPDATE: Aggiorna un meme esistente (es. titolo, file, etc)
 memeRouter.put("/:memeId",
-    // userContextMiddleware,
+    enforceAuthentication,
+    uploadMemePhoto.single("image"),
     // validateParamId('memeId'),
     // validateBody('memeUpdateSchema'),
     (req, res, next) => {
-        MemeController.updateMeme(req.params.memeId, req.body, req.userId)
+
+        if (!req.file) {
+            const error = new Error("No file uploaded");
+            error.status = 400;
+            throw error;
+        }
+
+        const memeData = JSON.parse(req.body.memeBody);
+
+        MemeController.updateMeme(req.params.memeId, memeData, req.file)
             .then(updatedMeme => res.json(updatedMeme))
             .catch(next);
     });
 
 // DELETE: Elimina un meme
 memeRouter.delete("/:memeId",
-    // userContextMiddleware,
+    enforceAuthentication,
     // validateParamId('memeId'),
     (req, res, next) => {
-        MemeController.deleteMeme(req.params.memeId, req.userId)
+        MemeController.deleteMeme(req.params.memeId)
             .then(result => res.json(result))
             .catch(next);
     });
