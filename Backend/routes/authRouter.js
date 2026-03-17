@@ -9,7 +9,7 @@ authRouter.post("/login",
         const { username, password } = req.body;
 
         if (!username || !password) {
-            const error = new Error("Username e password sono obbligatori");
+            const error = new Error("Username and password are required");
             error.status = 400;
             return next(error);
         }
@@ -25,7 +25,7 @@ authRouter.post("/register",
         const { username, password } = req.body;
 
         if (!username || !password) {
-            const error = new Error("Username e password sono obbligatori");
+            const error = new Error("Username and password are required");
             error.status = 400;
             return next(error);
         }

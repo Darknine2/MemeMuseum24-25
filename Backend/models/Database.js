@@ -32,15 +32,17 @@ Meme.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, 
 User.hasMany(Comment, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Comments' });
 Comment.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'User' });
 
-// Relazioni User -> Vote (1:N, un user esprime molti voti)
-User.hasMany(Vote, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Votes' });
-Vote.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'User' });
+// Relazione Molti-a-Molti (N:M): User <-> Meme (Tabella Ponte: Vote)
+User.belongsToMany(Meme, { through: Vote, foreignKey: { name: 'userId', defaultValue: 'Unknown' }, as: 'VotedMemes' });
+Meme.belongsToMany(User, { through: Vote, foreignKey: 'memeId', as: 'Voters' });
 
 // Relazioni Meme -> Comment (1:N, un meme ha molti commenti)
 Meme.hasMany(Comment, { foreignKey: 'memeId', as: 'Comments' });
 Comment.belongsTo(Meme, { foreignKey: 'memeId', as: 'Meme' });
 
-// Relazioni Meme -> Vote (1:N, un meme ha molti voti)
+// (Super Many-to-Many) Permette di interrogare anche direttamente il modello Vote
+User.hasMany(Vote, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Votes' });
+Vote.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'User' });
 Meme.hasMany(Vote, { foreignKey: 'memeId', as: 'Votes' });
 Vote.belongsTo(Meme, { foreignKey: 'memeId', as: 'Meme' });
 

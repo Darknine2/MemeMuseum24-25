@@ -5,6 +5,7 @@ import cors from "cors";
 import { initDatabase } from "./models/Database.js";
 import { memeRouter } from "./routes/memeRouter.js";
 import { authRouter } from "./routes/authRouter.js";
+import { tagRouter } from "./routes/tagRouter.js";
 import path from "path";
 import 'dotenv/config.js';
 

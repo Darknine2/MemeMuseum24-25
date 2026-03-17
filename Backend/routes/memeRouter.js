@@ -1,12 +1,20 @@
 import express from "express";
 import { MemeController } from "../controllers/MemeController.js";
+import { TagController } from "../controllers/TagController.js";
 import { uploadMemePhoto } from "../middleware/uploadPhoto.js";
-import { enforceAuthentication } from "../middleware/authorization.js";
+import { enforceAuthentication, enforceMemeOwnership } from "../middleware/authorization.js";
+import { commentRouter } from "./commentRouter.js";
+import { voteRouter } from "./voteRouter.js";
 // Commentati poiché i middleware non sono ancora stati creati nel progetto
 // import { userContextMiddleware } from "../middleware/authMiddleware.js";
 // import { validateParamId, validateBody } from "../middleware/validationMiddleware.js";
 
 export const memeRouter = express.Router();
+
+// Delega le rotte dei commenti al commentRouter raggruppandole in /:memeId/comment
+memeRouter.use("/:memeId/comment", commentRouter);
+memeRouter.use("/:memeId/vote", voteRouter);
+
 
 // CREATE: Crea un nuovo meme
 memeRouter.post("/",
@@ -23,7 +31,7 @@ memeRouter.post("/",
 
         const memeData = JSON.parse(req.body.memeBody);
 
-        MemeController.createMeme(memeData, req.username, req.file)
+        MemeController.createMeme(memeData, req.body.tags, req.username, req.file)
             .then(newMeme => res.status(201).json(newMeme))
             .catch(next);
     });
@@ -48,6 +56,7 @@ memeRouter.get("/:memeId",
 // UPDATE: Aggiorna un meme esistente (es. titolo, file, etc)
 memeRouter.put("/:memeId",
     enforceAuthentication,
+    enforceMemeOwnership,
     uploadMemePhoto.single("image"),
     // validateParamId('memeId'),
     // validateBody('memeUpdateSchema'),
@@ -69,6 +78,7 @@ memeRouter.put("/:memeId",
 // DELETE: Elimina un meme
 memeRouter.delete("/:memeId",
     enforceAuthentication,
+    enforceMemeOwnership,
     // validateParamId('memeId'),
     (req, res, next) => {
         MemeController.deleteMeme(req.params.memeId)

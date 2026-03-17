@@ -22,6 +22,16 @@ export function createModel(database) {
         created_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
+        },
+        upvotes_count: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false
+        },
+        downvotes_count: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false
         }
     }, { timestamps: false });
 }
