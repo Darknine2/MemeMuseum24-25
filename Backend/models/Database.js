@@ -26,7 +26,7 @@ export const { User, Meme, Tag, Comment, Vote } = database.models;
 
 // Relazioni User -> Meme (1:N, un user crea molti meme)
 User.hasMany(Meme, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Memes' });
-Meme.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Creatore' });
+Meme.belongsTo(User, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Author' });
 
 // Relazioni User -> Comment (1:N, un user scrive molti commenti)
 User.hasMany(Comment, { foreignKey: { name: 'userId', defaultValue: 'Unknown' }, onDelete: 'SET DEFAULT', as: 'Comments' });

@@ -1,0 +1,96 @@
+import { Component, inject, Input, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Meme } from '../../../_services/backend/meme-backend-service/meme.type';
+import { MemeBackendService } from '../../../_services/backend/meme-backend-service/meme-backend-service';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+
+type VoteType = 'up' | 'down' | null;
+
+@Component({
+  selector: 'app-meme-card',
+  imports: [CommonModule],
+  templateUrl: './meme-card.html',
+  styleUrl: './meme-card.scss'
+})
+export class MemeCard implements OnInit, OnDestroy {
+  @Input() meme: Meme | null = null;
+  userAvatar: string = "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_2.png";
+
+  memeService = inject(MemeBackendService);
+
+  // Stato del voto corrente dell'utente per questo specifico meme
+  currentVote: VoteType = null;
+
+  // Utilizziamo un RxJS Subject per catturare i click ed emetterli nel tempo
+  private voteSubject = new Subject<VoteType>();
+  private voteSubscription!: Subscription;
+
+  ngOnInit() {
+    // Applichiamo un "Debounce": attenderà che l'utente stia fermo per 1500 millisecondi 
+    // prima di lasciar passare in uscita l'ultimo valore cliccato
+    this.voteSubscription = this.voteSubject.pipe(
+      debounceTime(1500)
+    ).subscribe((finalVote) => {
+      this.sendVoteToBackend(finalVote);
+    });
+  }
+
+  ngOnDestroy() {
+    // Evitiamo memory leaks spegnendo la subscription quando la card sparisce
+    if (this.voteSubscription) {
+      this.voteSubscription.unsubscribe();
+    }
+  }
+
+  onVote(type: 'up' | 'down') {
+    if (!this.meme) return;
+
+    // Logica ottimistica UI (si aggiorna immediatamente a prescindere dal server)
+    if (this.currentVote === type) {
+      // Clicca lo stesso tasto: Annulla il voto
+      if (type === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) - 1;
+      if (type === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) - 1;
+      this.currentVote = null;
+    } else {
+      // Se aveva votato l'opposto, togliamo quel voto vecchio
+      if (this.currentVote === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) - 1;
+      if (this.currentVote === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) - 1;
+
+      // Assegniamo e computiamo il nuovo voto
+      if (type === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) + 1;
+      if (type === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) + 1;
+
+      this.currentVote = type;
+    }
+
+    // Trasmettiamo il nuovo stato attuale dello user al Subject (che lo freezerà per il tempo prestabilito)
+    this.voteSubject.next(this.currentVote);
+  }
+
+  sendVoteToBackend(voteState: VoteType) {
+    if (!this.meme?.id) return;
+
+    // TODO: Inviare la richiesta esatta con il MemeBackendService:
+    if (voteState === null) {
+      this.memeService.removeVoteMeme(this.meme.id).subscribe({
+        next: () => {
+          console.log('Voto rimosso con successo');
+        },
+        error: (error) => {
+          console.error('Errore durante la rimozione del voto:', error);
+        }
+      });
+    } else {
+      this.memeService.voteMeme(this.meme.id, voteState === 'up').subscribe({
+        next: () => {
+          console.log('Voto inviato con successo');
+        },
+        error: (error) => {
+          console.error('Errore durante l\'invio del voto:', error);
+        }
+      });
+    }
+    // this.memeService.voteMeme(this.meme.id, actionStr).subscribe(...)
+  }
+}

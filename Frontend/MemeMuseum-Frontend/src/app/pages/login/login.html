@@ -1,0 +1,28 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Bentornato</h2>
+    <p class="subtitle">Accedi per votare e commentare i meme</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="Inserisci il tuo username" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Inserisci la tua password" />
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="loginForm.invalid">Accedi</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Non hai un account? <a routerLink="/register">Registrati</a></p>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Meme, Tag, database } from "../models/Database.js";
+import { Meme, Tag, User, database } from "../models/Database.js";
 import { Op } from "sequelize";
 import fs from "fs/promises";
 import path from "path";
@@ -96,11 +96,18 @@ export class MemeController {
     }
 
     static _buildTagFilter(queryParams) {
-        const includeClause = [{
-            model: Tag,
-            as: 'Tags',
-            through: { attributes: [] } // non è necessaria la tabella ponte quindi non viene indicato nessuno suo attributo
-        }];
+        const includeClause = [
+            {
+                model: Tag,
+                as: 'Tags',
+                through: { attributes: [] }
+            },
+            {
+                model: User,
+                as: 'Author',
+                attributes: ['username']
+            }
+        ];
 
         if (queryParams.tags) {
             // Con URL ?tags=coding&tags=funny, req.query.tags è già un array.
@@ -214,5 +221,14 @@ export class MemeController {
         const memePath = memeObject.image_path;
         await fs.unlink(memePath);
         await fs.rmdir(memeFolder);
+    }
+
+    static async getMemeByUsername(username) {
+        const memes = await Meme.findAll({ where: { userId: username } });
+        return memes;
+    }
+
+    static async getMemeOfTheDay() {
+
     }
 }
