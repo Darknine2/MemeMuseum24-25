@@ -60,3 +60,27 @@
   font-weight: 600;
   font-size: 14px;
 }
+
+// ---- Mobile responsive ----
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 10px;
+  }
+
+  .logo .logo-text {
+    font-size: 18px;
+  }
+
+  .navbar-right {
+    gap: 8px;
+  }
+
+  // Nasconde il nome utente su schermi piccoli
+  .username {
+    display: none;
+  }
+
+  .btn-create .btn-label {
+    display: none;
+  }
+}

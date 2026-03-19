@@ -2,10 +2,17 @@
 @use 'styles/variables' as *;
 @use 'styles/globals';
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: $surface-base;
   color: $text-primary;
   font-family: 'Inter', 'Roboto', sans-serif;
+  overflow-x: hidden; // Evita lo scroll orizzontale su mobile
 }

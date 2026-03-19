@@ -5,14 +5,14 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       @if (errorMessage) {
-        <div class="error-message">{{ errorMessage }}</div>
+      <div class="error-message">{{ errorMessage }}</div>
       }
 
       <div class="form-group">
         <label for="username">Username</label>
         <input id="username" type="text" formControlName="username" placeholder="Scegli un username" />
         @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-          <small class="field-error">Minimo 3 caratteri</small>
+        <small class="field-error">Minimo 3 caratteri</small>
         }
       </div>
 
@@ -20,11 +20,11 @@
         <label for="password">Password</label>
         <input id="password" type="password" formControlName="password" placeholder="Scegli una password" />
         @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-          <small class="field-error">Minimo 4 caratteri</small>
+        <small class="field-error">Minimo 4 caratteri</small>
         }
       </div>
 
-      <button type="submit" class="submit-btn" [disabled]="registerForm.invalid">Crea account</button>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 8px;" [disabled]="registerForm.invalid">Crea account</button>
     </form>
 
     <div class="auth-footer">

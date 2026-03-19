@@ -1,0 +1,278 @@
+@use 'styles/variables' as *;
+
+// .form-group, .btn, .btn-primary, .btn-secondary, .alert sono in globals
+
+.create-meme-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 56px);
+}
+
+.create-meme-card {
+  width: 100%;
+  max-width: 620px;
+}
+
+// ---- Header ----
+.card-header {
+  margin-bottom: 32px;
+
+  h1 {
+    margin: 0 0 6px 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: $text-primary;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: $text-muted;
+    font-size: 15px;
+  }
+}
+
+// ---- Drop Zone ----
+.drop-zone {
+  border: 2px dashed $surface-border-alt;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color $transition-base, background-color $transition-base;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: $color-primary;
+    background-color: $color-primary-subtle;
+  }
+
+  &.has-preview {
+    border-style: solid;
+    border-color: $surface-border;
+    min-height: unset;
+
+    &:hover {
+      border-color: $color-primary;
+      background-color: transparent;
+    }
+  }
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.upload-icon {
+  color: $text-muted;
+  margin-bottom: 4px;
+}
+
+.drop-zone-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  color: $text-secondary;
+}
+
+.drop-zone-hint {
+  margin: 0;
+  font-size: 14px;
+  color: $text-muted;
+
+  .link-text {
+    color: $color-primary;
+    font-weight: 600;
+  }
+}
+
+.drop-zone-formats {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: $text-muted;
+  opacity: 0.7;
+}
+
+// ---- Image preview ----
+.preview-wrapper {
+  width: 100%;
+  position: relative;
+
+  .preview-img {
+    width: 100%;
+    max-height: 380px;
+    object-fit: contain;
+    display: block;
+    background-color: $surface-elevated;
+  }
+
+  .remove-image-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color $transition-base;
+
+    &:hover {
+      background-color: $color-danger;
+    }
+  }
+}
+
+// ---- Char counter ----
+.char-count {
+  font-size: 11px;
+  color: $text-muted;
+  text-align: right;
+  margin-top: 4px;
+}
+
+// ---- Label hint ----
+.label-hint {
+  font-size: 11px;
+  font-weight: normal;
+  color: $text-muted;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+// ---- Tags ----
+.tags-input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  background-color: $surface-elevated;
+  border: 1px solid $surface-border-alt;
+  border-radius: $border-radius-sm;
+  padding: 8px 12px;
+  min-height: 46px;
+  cursor: text;
+  transition: border-color $transition-base;
+
+  &:focus-within {
+    border-color: $color-primary;
+  }
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: $color-primary-subtle;
+  color: $color-primary;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity $transition-base;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.tag-input-field {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: $text-primary;
+  font-size: 14px;
+  font-family: inherit;
+  flex: 1;
+  min-width: 140px;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+// ---- Actions bar ----
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+// ---- Submit spinner ----
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ---- Mobile responsive ----
+@media (max-width: 600px) {
+  .create-meme-container {
+    padding: 20px 14px;
+  }
+
+  .card-header h1 {
+    font-size: 22px;
+  }
+
+  .drop-zone {
+    min-height: 160px;
+  }
+
+  .drop-zone-content {
+    padding: 24px 16px;
+  }
+
+  .upload-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .preview-img {
+    max-height: 260px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

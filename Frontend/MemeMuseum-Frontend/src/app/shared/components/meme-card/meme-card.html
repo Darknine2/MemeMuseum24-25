@@ -21,10 +21,18 @@
   <!-- Contenuto principale -->
   <div class="card-content">
     <h3 class="title">{{ meme.title }}</h3>
+
+    @if (meme.Tags && meme.Tags.length > 0) {
+      <div class="tag-list">
+        @for (tag of meme.Tags; track tag.id) {
+          <span class="tag-chip">#{{ tag.name }}</span>
+        }
+      </div>
+    }
+
     <div class="image-container">
       <img [src]="'http://localhost:3000/' + meme.image_path" alt="Meme Image"
         style="width: 100%; height: auto; object-fit: contain; display: block;" />
-
     </div>
   </div>
 

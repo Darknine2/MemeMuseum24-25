@@ -9,6 +9,10 @@ export interface Meme {
     Author?: {
         username: string;
     };
+    Tags?: {
+        id: number;
+        name: string;
+    }[];
     Votes?: {
         vote: boolean;
     }[];
