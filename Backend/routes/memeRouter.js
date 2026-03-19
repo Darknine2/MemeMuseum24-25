@@ -45,6 +45,23 @@ memeRouter.get("/",
             .catch(next);
     });
 
+// READ: Ottieni tutti i meme di un utente specifico
+memeRouter.get("/user",
+    enforceAuthentication,
+    (req, res, next) => {
+        MemeController.getMemeByUsername(req.username)
+            .then(memes => res.json(memes))
+            .catch(next);
+    });
+
+memeRouter.get("/daily",
+    optionalAuthentication,
+    (req, res, next) => {
+        MemeController.getMemeOfTheDay()
+            .then(meme => res.json(meme))
+            .catch(next);
+    });
+
 // READ: Ottieni un singolo meme tramite ID
 memeRouter.get("/:memeId",
     optionalAuthentication,
@@ -87,5 +104,7 @@ memeRouter.delete("/:memeId",
             .then(result => res.json(result))
             .catch(next);
     });
+
+
 
 

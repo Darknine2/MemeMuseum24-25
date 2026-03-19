@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../_services/auth-service/auth-service';
+import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
+import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 
 @Component({
   selector: 'app-navbar',
@@ -10,4 +12,26 @@ import { AuthService } from '../../_services/auth-service/auth-service';
 })
 export class Navbar {
   authService = inject(AuthService);
+  memeService = inject(MemeBackendService);
+
+  dailyMeme: Meme | null = null;
+
+  constructor(private router: Router) { }
+
+  goToDailyMeme() {
+    console.log('Meme del giorno');
+    this.memeService.getDailyMeme().subscribe({
+      next: (meme) => {
+        this.router.navigate(['/meme', meme.id]);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+
+  }
+
+
+
 }

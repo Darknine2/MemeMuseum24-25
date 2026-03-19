@@ -8,7 +8,7 @@
         <img [src]="userAvatar" alt="Avatar" class="avatar" />
         <span class="author">{{ meme.Author?.username || 'Sconosciuto' }}</span>
         <span class="dot">•</span>
-        <span class="time-ago">{{ meme.created_at | date:'shortTime' }}</span>
+        <span class="time-ago">{{ meme.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
       <button class="more-options-btn" aria-label="Altre opzioni">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -71,11 +71,12 @@
     </div>
 
     <button class="action-btn comment-btn" [routerLink]="isStandalone ? null : ['/meme', meme.id]">
+
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
       </svg>
-      Commenti
+      <span class="comment-count">{{ meme.comment_count || 0 }}</span>
     </button>
   </div>
 </article>

@@ -16,4 +16,12 @@ export class AuthBackendService {
   register(credentials: {username: string, password: string}): Observable<{token: string}> {
     return this.http.post<{token: string}>(`${this.url}/register`, credentials);
   }
+
+  updateCredentials(payload: any): Observable<any> {
+    return this.http.put(`${this.url}`, payload);
+  }
+
+  deleteAccount(): Observable<any> {
+    return this.http.delete(this.url);
+  }
 }

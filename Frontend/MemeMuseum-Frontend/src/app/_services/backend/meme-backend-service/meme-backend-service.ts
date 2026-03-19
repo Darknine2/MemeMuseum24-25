@@ -15,7 +15,7 @@ export class MemeBackendService {
     if (sortBy) {
       url += `&sortBy=${sortBy}`;
     }
-    
+
     if (filters.search) {
       url += `&search=${encodeURIComponent(filters.search)}`;
     }
@@ -27,11 +27,11 @@ export class MemeBackendService {
         url += `&tags=${encodeURIComponent(tag)}`;
       });
     }
-    
+
     if (filters.startDate) {
       url += `&startDate=${encodeURIComponent(filters.startDate)}`;
     }
-    
+
     if (filters.endDate) {
       url += `&endDate=${encodeURIComponent(filters.endDate)}`;
     }
@@ -74,4 +74,11 @@ export class MemeBackendService {
     return this.http.get<Meme>(`${this.url}/${id}`);
   }
 
+  getDailyMeme() {
+    return this.http.get<Meme>(`${this.url}/daily`);
+  }
+
+  getMyMemes() {
+    return this.http.get<Meme[]>(`${this.url}/user`);
+  }
 }

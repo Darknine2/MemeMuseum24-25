@@ -1,0 +1,226 @@
+@use 'styles/variables' as *;
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: calc(100vh - 56px);
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 40px;
+
+  .avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid $surface-raised;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .username {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: $text-primary;
+    letter-spacing: -0.5px;
+  }
+
+  .meme-count {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+.profile-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.sidebar-settings {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 80px;
+
+  .settings-card, .danger-zone {
+    background-color: $surface-raised;
+    border: 1px solid $surface-border;
+    border-radius: $border-radius-card;
+    padding: 24px;
+
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      color: $text-primary;
+      font-weight: 700;
+    }
+  }
+
+  .settings-card {
+    .form-group {
+      margin-bottom: 16px;
+
+      input {
+        width: 100%;
+        padding: 10px 14px;
+        background-color: $surface-elevated;
+        border: 1px solid $surface-border-alt;
+        border-radius: 8px;
+        color: $text-primary;
+        font-family: inherit;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+        }
+      }
+    }
+
+    .btn-primary {
+      width: 100%;
+    }
+
+    .alert {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+
+      &.error-msg {
+        background-color: rgba(255, 69, 58, 0.15);
+        color: #ff453a;
+        border: 1px solid rgba(255, 69, 58, 0.3);
+      }
+
+      &.success-msg {
+        background-color: rgba(48, 209, 88, 0.15);
+        color: #30d158;
+        border: 1px solid rgba(48, 209, 88, 0.3);
+      }
+    }
+  }
+
+  .danger-zone {
+    border-color: rgba(255, 69, 58, 0.3);
+    background-color: rgba(255, 69, 58, 0.05);
+
+    h3 {
+      color: #ff453a;
+    }
+
+    p {
+      color: $text-secondary;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0 0 20px 0;
+    }
+
+    .btn-danger {
+      width: 100%;
+      background-color: rgba(255, 69, 58, 0.15);
+      border: 1px solid rgba(255, 69, 58, 0.5);
+      color: #ff453a;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #ff453a;
+        color: white;
+      }
+    }
+  }
+}
+
+.feed-memes {
+  flex: 1;
+
+  .feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $surface-border;
+
+    h3 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: $text-primary;
+    }
+  }
+
+  .loading-text {
+    text-align: center;
+    color: $text-muted;
+    font-size: 15px;
+    padding: 40px;
+  }
+
+  .meme-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: $surface-raised;
+    border-radius: $border-radius-card;
+    border: 1px dashed $surface-border;
+    
+    svg {
+      color: $text-muted;
+      margin-bottom: 16px;
+    }
+
+    p {
+      color: $text-secondary;
+      margin: 0 0 24px 0;
+      font-size: 16px;
+    }
+  }
+} // Chiusura feed-memes
+// ==== Mobile Responsive ====
+@media (max-width: 800px) {
+  .profile-layout {
+    flex-direction: column;
+  }
+
+  .sidebar-settings {
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+
+  .feed-memes {
+    width: 100%;
+  }
+}
+

@@ -60,6 +60,7 @@ export class MemePage implements OnInit {
   submitComment() {
     if (!this.newCommentText.trim() || !this.meme?.id) return;
     this.isSubmittingComment = true;
+    this.meme.comment_count = (this.meme.comment_count || 0) + 1;
 
     this.commentService.createComment(this.meme.id, this.newCommentText.trim()).subscribe({
       next: (comment) => {

@@ -79,10 +79,9 @@ export class MemeController {
 
         // Filtro di Ricerca (Titolo o Descrizione)
         if (queryParams.search) {
-            const likeOp = process.env.DIALECT === 'postgres' ? Op.iLike : Op.like;
             whereClause[Op.or] = [
-                { title: { [likeOp]: `%${queryParams.search}%` } },
-                { description: { [likeOp]: `%${queryParams.search}%` } }
+                { title: { [Op.iLike]: `%${queryParams.search}%` } },
+                { description: { [Op.iLike]: `%${queryParams.search}%` } }
             ];
         }
 
@@ -105,7 +104,48 @@ export class MemeController {
         return whereClause;
     }
 
-    static _buildTagFilter(queryParams, currentUsername = null) {
+    static _buildTagFilter(queryParams, username) {
+
+        const includeClause = MemeController.getBaseIncludeClause(username);
+
+        if (queryParams.tags) {
+            // Con URL ?tags=coding&tags=funny, req.query.tags è già un array.
+            // Con URL ?tags=coding è solo una stringa, quindi forziamo l'array.
+            const tagsArray = Array.isArray(queryParams.tags) ? queryParams.tags : [queryParams.tags];
+
+            // Forza INNER JOIN per restituire solo i meme che hanno *almeno uno* di questi tag
+            includeClause[0].where = {
+                name: {
+                    [Op.in]: tagsArray
+                }
+            };
+        }
+        return includeClause;
+    }
+
+
+    static _buildOrderClause(queryParams) {
+        let orderClause = [['created_at', 'DESC']]; // Mostriamo i più recenti in cima (Default)
+
+        if (queryParams.sortBy === 'oldest') {
+            orderClause = [['created_at', 'ASC']];
+
+        } else if (queryParams.sortBy === 'most_upvoted') {
+            orderClause = [
+                ['votes_count', 'DESC'],
+                ['created_at', 'DESC'] //se hanno gli stessi voti, mette prima il più recente
+            ];
+
+        } else if (queryParams.sortBy === 'most_downvoted') {
+            orderClause = [
+                ['votes_count', 'ASC'],
+                ['created_at', 'DESC']
+            ];
+        }
+        return orderClause;
+    }
+
+    static getBaseIncludeClause(currentUsername = null) {
         const includeClause = [
             {
                 model: Tag,
@@ -129,51 +169,18 @@ export class MemeController {
             });
         }
 
-        if (queryParams.tags) {
-            // Con URL ?tags=coding&tags=funny, req.query.tags è già un array.
-            // Con URL ?tags=coding è solo una stringa, quindi forziamo l'array.
-            const tagsArray = Array.isArray(queryParams.tags) ? queryParams.tags : [queryParams.tags];
-
-            // Forza INNER JOIN per restituire solo i meme che hanno *almeno uno* di questi tag
-            includeClause[0].where = {
-                name: {
-                    [Op.in]: tagsArray
-                }
-            };
-        }
         return includeClause;
-    }
-
-    static _buildOrderClause(queryParams) {
-        let orderClause = [['created_at', 'DESC']]; // Mostriamo i più recenti in cima (Default)
-
-        if (queryParams.sortBy === 'oldest') {
-            orderClause = [['created_at', 'ASC']];
-
-        } else if (queryParams.sortBy === 'most_upvoted') {
-            orderClause = [
-                ['votes_count', 'DESC'],
-                ['created_at', 'DESC'] //se hanno gli stessi voti, mette prima il più recente
-            ];
-
-        } else if (queryParams.sortBy === 'most_downvoted') {
-            orderClause = [
-                ['votes_count', 'ASC'],
-                ['created_at', 'DESC']
-            ];
-        }
-        return orderClause;
     }
 
     // READ BY ID
     static async getMemeById(memeId, currentUsername = null) {
-        const includeClause = MemeController._buildTagFilter({}, currentUsername);
-        
+        const includeClause = MemeController.getBaseIncludeClause(currentUsername);
+
         const meme = await Meme.findOne({
             where: { id: memeId },
             include: includeClause
         });
-        
+
         if (!meme) {
             const error = new Error("Meme not found");
             error.status = 404;
@@ -250,11 +257,47 @@ export class MemeController {
     }
 
     static async getMemeByUsername(username) {
-        const memes = await Meme.findAll({ where: { userId: username } });
+        const includeClause = MemeController.getBaseIncludeClause(username);
+        const memes = await Meme.findAll({ 
+            where: { userId: username },
+            include: includeClause,
+            order: [['created_at', 'DESC']],
+            distinct: true
+        });
         return memes;
     }
 
     static async getMemeOfTheDay() {
+
+        // 1. Ottieni la data odierna
+        const now = new Date();
+        const d = 22;
+        const m = now.getMonth() + 1; // Gennaio è 0
+        const y = now.getFullYear();
+
+        // 2. Calcolo del Seed deterministico
+        const seed = (d + m + y);
+        const PseudoRandomSeed = BigInt(seed) * BigInt(1103515245);
+
+        // 3. Conteggio dei meme nel database
+        const totalMemes = await Meme.count();
+
+        if (totalMemes === 0) {
+            const error = new Error("Nessun meme nell'archivio");
+            error.status = 404;
+            throw error;
+        }
+
+        // 4. Trova l'indice (da 0 a totalMemes - 1)
+        const targetIndex = PseudoRandomSeed % BigInt(totalMemes);
+
+        const dailyMeme = await Meme.findOne({
+            order: [['id', 'ASC']],
+            offset: Number(targetIndex),
+            limit: 1
+        });
+
+        return dailyMeme;
 
     }
 }

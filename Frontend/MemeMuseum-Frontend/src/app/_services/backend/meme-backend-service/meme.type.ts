@@ -5,6 +5,7 @@ export interface Meme {
     image_path: string;
     created_at?: string | Date;
     votes_count?: number;
+    comment_count?: number;
     userId?: string;
     Author?: {
         username: string;

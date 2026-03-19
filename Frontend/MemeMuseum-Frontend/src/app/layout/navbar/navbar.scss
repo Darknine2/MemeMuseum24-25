@@ -19,7 +19,52 @@
 .navbar-left {
   display: flex;
   align-items: center;
+  flex: 1;
 }
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.btn-multicolor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(45deg, #ff007f, #7928ca, #ff007f);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: shineGradient 3s linear infinite;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(121, 40, 202, 0.5);
+  }
+
+  svg {
+    fill: currentColor;
+  }
+}
+
+@keyframes shineGradient {
+  to {
+    background-position: 200% center;
+  }
+}
+
 
 .logo {
   display: flex;
@@ -45,6 +90,8 @@
 .navbar-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex: 1;
   gap: 16px;
 }
 
@@ -82,5 +129,20 @@
 
   .btn-create .btn-label {
     display: none;
+  }
+  
+  // Rendi il bottone centrale più compatto
+  .btn-multicolor {
+    padding: 6px;
+    border-radius: 50%;
+    
+    span {
+      display: none; // Nasconde la scritta "Meme del Giorno"
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }

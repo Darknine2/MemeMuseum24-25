@@ -20,6 +20,9 @@ export class CommentController {
             ...commentData
         });
 
+        meme.comment_count++;
+        await meme.save();
+
         return newComment;
     }
 
@@ -47,6 +50,7 @@ export class CommentController {
 
     // DELETE BY ID: Elimina un commento
     static async deleteComment(commentId) {
+
         const comment = await Comment.findByPk(commentId);
         if (!comment) {
             const error = new Error("Comment not found");
@@ -54,7 +58,16 @@ export class CommentController {
             throw error;
         }
 
+        const meme = await Meme.findByPk(comment.memeId);
+        if (!meme) {
+            const error = new Error("Meme not found");
+            error.status = 404;
+            throw error;
+        }
+
         await comment.destroy();
+        meme.comment_count--;
+        await meme.save();
         return { message: "Comment deleted successfully", id: commentId };
     }
 }
