@@ -1,0 +1,35 @@
+// ============================================================
+// Design Tokens – MemeMuseum
+// ============================================================
+
+// ---- Brand colors ----
+$color-primary:        #4eb2b8;
+$color-primary-dark:   #184a4d;
+$color-primary-glow:   rgba(78, 178, 184, 0.4);
+$color-primary-subtle: rgba(78, 178, 184, 0.15);
+
+$color-secondary:      #7193ff;
+$color-secondary-glow: rgba(113, 147, 255, 0.4);
+
+$color-danger:         #ff585b;
+$color-danger-subtle:  rgba(255, 88, 91, 0.1);
+
+// ---- Surfaces ----
+$surface-base:         #0e1113;
+$surface-raised:       #1a1a1b;
+$surface-elevated:     #272729;
+$surface-border:       rgba(255, 255, 255, 0.1);
+$surface-border-alt:   #343536;
+
+// ---- Text ----
+$text-primary:   #ffffff;
+$text-secondary: #d7dadc;
+$text-muted:     #818384;
+
+// ---- Misc ----
+$border-radius-pill: 20px;
+$border-radius-card: 12px;
+$border-radius-sm:   4px;
+
+$transition-fast: 0.2s ease;
+$transition-base: 0.2s;

@@ -39,10 +39,11 @@
           <path d="M12 4 L4 12 L9 12 L9 20 L15 20 L15 12 L20 12 Z" fill="none"></path>
         </svg>
       </button>
-      <span class="vote-count"
-        [style.color]="currentVote === 'up' ? '#4eb2b8' : 'white'">
-        {{ meme.upvotes_count || 0 }}
+
+      <span class="vote-count" [style.color]="currentVote === 'up' ? '#4eb2b8' : (currentVote === 'down' ? '#7193ff' : 'white')">
+        {{ meme.votes_count || 0 }}
       </span>
+
       <button class="action-btn downvote-btn" [class.active]="currentVote === 'down'" (click)="onVote('down')"
         aria-label="Downvote">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -51,10 +52,6 @@
           <path d="M12 20 L20 12 L15 12 L15 4 L9 4 L9 12 L4 12 Z" fill="none"></path>
         </svg>
       </button>
-      <span class="vote-count"
-        [style.color]="currentVote === 'down' ? '#7193ff' : 'white'">
-        {{ meme.downvotes_count || 0 }}
-      </span>
     </div>
 
     <button class="action-btn comment-btn">

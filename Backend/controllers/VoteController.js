@@ -17,6 +17,8 @@ export class VoteController {
             where: { memeId: meme.id, userId: username }
         });
 
+        console.log(isUpvote);
+
         if (existingVote) {
             return await this.updateVote(meme, existingVote, isUpvote);
         }
@@ -33,11 +35,9 @@ export class VoteController {
         }
 
         if (existingVote.vote) {
-            meme.upvotes_count--;
-            meme.downvotes_count++;
+            meme.votes_count = meme.votes_count - 2;
         } else {
-            meme.downvotes_count--;
-            meme.upvotes_count++;
+            meme.votes_count = meme.votes_count + 2;
         }
 
         existingVote.vote = voteValue;
@@ -55,9 +55,9 @@ export class VoteController {
         });
 
         if (voteValue) {
-            meme.upvotes_count++;
+            meme.votes_count++;
         } else {
-            meme.downvotes_count++;
+            meme.votes_count--;
         }
 
         await meme.save();
@@ -84,10 +84,10 @@ export class VoteController {
         }
 
         if (existingVote.vote) {
-            meme.upvotes_count--;
+            meme.votes_count--;
         }
         else {
-            meme.downvotes_count--;
+            meme.votes_count++;
         }
 
         await meme.save();

@@ -27,6 +27,12 @@ export class MemeCard implements OnInit, OnDestroy {
   private voteSubscription!: Subscription;
 
   ngOnInit() {
+    // Imposta il voto iniziale se l'utente ha già votato questo meme
+    if (this.meme?.Votes && this.meme.Votes.length > 0) {
+      const userVote = this.meme.Votes[0].vote;
+      this.currentVote = userVote === true ? 'up' : 'down';
+    }
+
     // Applichiamo un "Debounce": attenderà che l'utente stia fermo per 1500 millisecondi 
     // prima di lasciar passare in uscita l'ultimo valore cliccato
     this.voteSubscription = this.voteSubject.pipe(
@@ -46,20 +52,22 @@ export class MemeCard implements OnInit, OnDestroy {
   onVote(type: 'up' | 'down') {
     if (!this.meme) return;
 
-    // Logica ottimistica UI (si aggiorna immediatamente a prescindere dal server)
+
     if (this.currentVote === type) {
       // Clicca lo stesso tasto: Annulla il voto
-      if (type === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) - 1;
-      if (type === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) - 1;
+      if (type === 'up') this.meme.votes_count = (this.meme.votes_count || 0) - 1;
+      if (type === 'down') this.meme.votes_count = (this.meme.votes_count || 0) + 1;
       this.currentVote = null;
     } else {
-      // Se aveva votato l'opposto, togliamo quel voto vecchio
-      if (this.currentVote === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) - 1;
-      if (this.currentVote === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) - 1;
-
-      // Assegniamo e computiamo il nuovo voto
-      if (type === 'up') this.meme.upvotes_count = (this.meme.upvotes_count || 0) + 1;
-      if (type === 'down') this.meme.downvotes_count = (this.meme.downvotes_count || 0) + 1;
+      // Cambio voto o nuovo voto
+      if (this.currentVote === 'up' && type === 'down') {
+        this.meme.votes_count = (this.meme.votes_count || 0) - 2;
+      } else if (this.currentVote === 'down' && type === 'up') {
+        this.meme.votes_count = (this.meme.votes_count || 0) + 2;
+      } else if (!this.currentVote) {
+        if (type === 'up') this.meme.votes_count = (this.meme.votes_count || 0) + 1;
+        if (type === 'down') this.meme.votes_count = (this.meme.votes_count || 0) - 1;
+      }
 
       this.currentVote = type;
     }
@@ -82,7 +90,8 @@ export class MemeCard implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.memeService.voteMeme(this.meme.id, voteState === 'up').subscribe({
+      console.log(voteState == 'up');
+      this.memeService.voteMeme(this.meme.id, voteState == 'up').subscribe({
         next: () => {
           console.log('Voto inviato con successo');
         },

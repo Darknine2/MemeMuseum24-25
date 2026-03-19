@@ -54,7 +54,7 @@ Tag.belongsToMany(Meme, { through: 'MemeTag', foreignKey: 'tagId', as: 'Memes' }
 export async function initDatabase() {
     try {
         await database.sync();
-        console.log("Database sincronizzato correttamente");
+        console.log("Database sincronizzato correttamente (con alter)");
 
         await User.findOrCreate({
             where: { username: 'Unknown' },

@@ -6,16 +6,25 @@
   </div>
 
   <div class="navbar-right">
+
     @if (authService.isAuthenticated()) {
-      <div class="user-profile">
-        <span class="username">{{ authService.user() }}</span>
-        <button class="btn btn-secondary" (click)="authService.logout()">Logout</button>
-      </div>
+    <a routerLink="/create-meme" class="btn btn-create">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="create-icon">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Carica il tuo meme
+    </a>
+
+    <div class="user-profile">
+      <span class="username">{{ authService.user() }}</span>
+      <button class="btn btn-secondary" (click)="authService.logout()">Logout</button>
+    </div>
     } @else {
-      <div class="auth-buttons">
-        <a routerLink="/login" class="btn btn-secondary">Login</a>
-        <a routerLink="/register" class="btn btn-primary">Registrati</a>
-      </div>
+    <div class="auth-buttons">
+      <a routerLink="/login" class="btn btn-secondary">Login</a>
+      <a routerLink="/register" class="btn btn-primary">Registrati</a>
+    </div>
     }
   </div>
 </nav>

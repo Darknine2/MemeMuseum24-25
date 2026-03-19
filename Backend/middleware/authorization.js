@@ -19,6 +19,20 @@ export function enforceAuthentication(req, res, next) {
     });
 }
 
+export function optionalAuthentication(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader?.split(' ')[1];
+    if (!token) {
+        return next();
+    }
+    AuthController.isTokenValid(token, (err, decodedToken) => {
+        if (!err && decodedToken) {
+            req.username = decodedToken.user;
+        }
+        next();
+    });
+}
+
 
 export async function enforceCommentOwnership(req, res, next) {
     const comment = await Comment.findByPk(req.params.commentId);

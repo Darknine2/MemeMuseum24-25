@@ -1,0 +1,157 @@
+@use 'variables' as *;
+
+// ============================================================
+// Global Utility Classes – MemeMuseum
+// Queste classi sono disponibili globalmente a tutti i componenti.
+// ============================================================
+
+
+// ---- Base button ----
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: $border-radius-pill;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: opacity $transition-base, transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ---- Variants ----
+.btn-primary {
+  background-color: $color-primary;
+  color: $text-primary;
+
+  &:hover {
+    opacity: 1;
+    box-shadow: 0 4px 12px $color-primary-glow;
+  }
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: $text-secondary;
+  border: 1px solid $surface-border;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+  }
+}
+
+.btn-danger {
+  background-color: $color-danger;
+  color: $text-primary;
+
+  &:hover {
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(255, 88, 91, 0.4);
+  }
+}
+
+.btn-create {
+  background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+  color: $text-primary;
+
+  &:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px $color-primary-glow;
+  }
+}
+
+// ---- Full width modifier ----
+.btn-block {
+  width: 100%;
+}
+
+
+// ============================================================
+// Form utilities
+// ============================================================
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  label {
+    margin-bottom: 6px;
+    color: $text-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: $surface-elevated;
+    border: 1px solid $surface-border-alt;
+    border-radius: $border-radius-sm;
+    padding: 12px 16px;
+    color: $text-primary;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color $transition-base;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  .field-error {
+    color: $color-danger;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+// ---- Alert / banner ----
+.alert {
+  padding: 12px;
+  border-radius: $border-radius-sm;
+  margin-bottom: 20px;
+  font-size: 14px;
+
+  &-error {
+    background-color: $color-danger-subtle;
+    border: 1px solid $color-danger;
+    color: $color-danger;
+  }
+
+  &-success {
+    background-color: rgba(78, 178, 184, 0.1);
+    border: 1px solid $color-primary;
+    color: $color-primary;
+  }
+}
+
+

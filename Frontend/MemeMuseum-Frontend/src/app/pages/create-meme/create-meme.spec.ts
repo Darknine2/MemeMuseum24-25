@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Footer } from './footer';
+import { CreateMeme } from './create-meme';
 
-describe('Footer', () => {
-  let component: Footer;
-  let fixture: ComponentFixture<Footer>;
+describe('CreateMeme', () => {
+  let component: CreateMeme;
+  let fixture: ComponentFixture<CreateMeme>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Footer]
+      imports: [CreateMeme]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Footer);
+    fixture = TestBed.createComponent(CreateMeme);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

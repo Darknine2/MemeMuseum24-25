@@ -2,7 +2,7 @@ import express from "express";
 import { MemeController } from "../controllers/MemeController.js";
 import { TagController } from "../controllers/TagController.js";
 import { uploadMemePhoto } from "../middleware/uploadPhoto.js";
-import { enforceAuthentication, enforceMemeOwnership } from "../middleware/authorization.js";
+import { enforceAuthentication, enforceMemeOwnership, optionalAuthentication } from "../middleware/authorization.js";
 import { commentRouter } from "./commentRouter.js";
 import { voteRouter } from "./voteRouter.js";
 // Commentati poiché i middleware non sono ancora stati creati nel progetto
@@ -38,8 +38,9 @@ memeRouter.post("/",
 
 // READ: Ottieni tutti i meme
 memeRouter.get("/",
+    optionalAuthentication,
     (req, res, next) => {
-        MemeController.getAllMemes(req.query)
+        MemeController.getAllMemes(req.query, req.username)
             .then(memes => res.json(memes))
             .catch(next);
     });

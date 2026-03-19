@@ -4,10 +4,12 @@ export interface Meme {
     description?: string;
     image_path: string;
     created_at?: string | Date;
-    upvotes_count?: number;
-    downvotes_count?: number;
+    votes_count?: number;
     userId?: string;
     Author?: {
         username: string;
     };
+    Votes?: {
+        vote: boolean;
+    }[];
 }

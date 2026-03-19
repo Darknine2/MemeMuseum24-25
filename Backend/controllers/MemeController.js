@@ -1,4 +1,4 @@
-import { Meme, Tag, User, database } from "../models/Database.js";
+import { Meme, Tag, User, database, Vote } from "../models/Database.js";
 import { Op } from "sequelize";
 import fs from "fs/promises";
 import path from "path";
@@ -46,13 +46,13 @@ export class MemeController {
     }
 
     // READ: Ottieni tutti i meme (con paginazione per la homepage, filtri per tag e data)
-    static async getAllMemes(queryParams = {}) {
+    static async getAllMemes(queryParams = {}, currentUsername = null) {
         const page = parseInt(queryParams.page) || 1;
         const limit = 10; // Carica 10 meme alla volta
         const offset = (page - 1) * limit;
 
         const whereClause = MemeController._buildDateFilter(queryParams);
-        const includeClause = MemeController._buildTagFilter(queryParams);
+        const includeClause = MemeController._buildTagFilter(queryParams, currentUsername);
         const orderClause = MemeController._buildOrderClause(queryParams);
 
         const { count, rows } = await Meme.findAndCountAll({
@@ -95,7 +95,7 @@ export class MemeController {
         return whereClause;
     }
 
-    static _buildTagFilter(queryParams) {
+    static _buildTagFilter(queryParams, currentUsername = null) {
         const includeClause = [
             {
                 model: Tag,
@@ -108,6 +108,16 @@ export class MemeController {
                 attributes: ['username']
             }
         ];
+
+        if (currentUsername) {
+            includeClause.push({
+                model: Vote,
+                as: 'Votes',
+                attributes: ['vote'],
+                where: { userId: currentUsername },
+                required: false
+            });
+        }
 
         if (queryParams.tags) {
             // Con URL ?tags=coding&tags=funny, req.query.tags è già un array.
@@ -132,13 +142,13 @@ export class MemeController {
 
         } else if (queryParams.sortBy === 'most_upvoted') {
             orderClause = [
-                ['upvotes_count', 'DESC'],
+                ['votes_count', 'DESC'],
                 ['created_at', 'DESC'] //se hanno gli stessi voti, mette prima il più recente
             ];
 
         } else if (queryParams.sortBy === 'most_downvoted') {
             orderClause = [
-                ['downvotes_count', 'DESC'],
+                ['votes_count', 'ASC'],
                 ['created_at', 'DESC']
             ];
         }

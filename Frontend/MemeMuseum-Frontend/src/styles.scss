@@ -1,8 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'styles/variables' as *;
+@use 'styles/globals';
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #0e1113;
-  color: #ffffff;
+  background-color: $surface-base;
+  color: $text-primary;
   font-family: 'Inter', 'Roboto', sans-serif;
 }

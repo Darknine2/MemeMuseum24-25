@@ -1,0 +1,136 @@
+<div class="create-meme-container">
+  <div class="create-meme-card">
+
+    <div class="card-header">
+      <h1>Carica il tuo meme</h1>
+      <p class="subtitle">Condividi qualcosa di divertente con la community</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="create-form">
+
+      <!-- Upload immagine -->
+      <div class="form-group">
+        <label>Immagine *</label>
+        <div
+          class="drop-zone"
+          [class.has-preview]="imagePreviewUrl"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()">
+
+          @if (imagePreviewUrl) {
+            <!-- Preview immagine caricata -->
+            <div class="preview-wrapper">
+              <img [src]="imagePreviewUrl" alt="Anteprima" class="preview-img" />
+              <button type="button" class="remove-image-btn" (click)="removeImage(); $event.stopPropagation()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          } @else {
+            <!-- Upload placeholder -->
+            <div class="drop-zone-content">
+              <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="3" ry="3"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <p class="drop-zone-title">Trascina un'immagine qui</p>
+              <p class="drop-zone-hint">oppure <span class="link-text">clicca per selezionare</span></p>
+              <p class="drop-zone-formats">PNG, JPG, GIF, WEBP</p>
+            </div>
+          }
+
+          <input
+            #fileInput
+            type="file"
+            id="meme-image-input"
+            accept="image/*"
+            hidden
+            (change)="onFileSelected($event)" />
+        </div>
+      </div>
+
+      <!-- Titolo -->
+      <div class="form-group">
+        <label for="meme-title">Titolo *</label>
+        <input
+          id="meme-title"
+          type="text"
+          [(ngModel)]="title"
+          name="title"
+          placeholder="Dai un titolo al tuo meme..."
+          maxlength="100" />
+        <span class="char-count">{{ title.length }}/100</span>
+      </div>
+
+      <!-- Descrizione -->
+      <div class="form-group">
+        <label for="meme-description">Descrizione</label>
+        <textarea
+          id="meme-description"
+          [(ngModel)]="description"
+          name="description"
+          placeholder="Aggiungi una descrizione opzionale..."
+          rows="3"
+          maxlength="500">
+        </textarea>
+        <span class="char-count">{{ description.length }}/500</span>
+      </div>
+
+      <!-- Tag -->
+      <div class="form-group">
+        <label for="meme-tags">Tag <span class="label-hint">(max 5 — premi Enter o virgola per aggiungere)</span></label>
+        <div class="tags-input-wrapper">
+          @for (tag of tags; track tag) {
+            <span class="tag-pill">
+              #{{ tag }}
+              <button type="button" class="tag-remove" (click)="removeTag(tag)" [attr.aria-label]="'Rimuovi tag ' + tag">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </span>
+          }
+          @if (tags.length < 5) {
+            <input
+              id="meme-tags"
+              type="text"
+              [(ngModel)]="tagInput"
+              name="tagInput"
+              placeholder="es. gaming, funny..."
+              (keydown)="onTagKeydown($event)"
+              class="tag-input-field" />
+          }
+        </div>
+      </div>
+
+      <!-- Azioni -->
+      <div class="form-actions">
+        <a routerLink="/home" class="btn btn-secondary">Annulla</a>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!canSubmit()">
+          @if (isSubmitting) {
+            <span class="spinner"></span>
+            Caricamento...
+          } @else {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Pubblica meme
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

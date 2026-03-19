@@ -1,109 +1,36 @@
+@use 'src/styles/variables' as *;
+
+// Stile specifico della pagina Login.
+// .btn, .btn-primary, .btn-secondary, .form-group, .alert sono in src/styles/_globals.scss
+
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 56px);
-  background-color: #0e1113;
   padding: 20px;
 }
 
 .auth-card {
   width: 100%;
   max-width: 400px;
-  background-color: #1a1a1b;
-  border-radius: 12px;
+  background-color: $surface-raised;
+  border-radius: $border-radius-card;
   padding: 32px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid $surface-border;
 
   h2 {
     margin: 0 0 8px 0;
-    color: #ffffff;
+    color: $text-primary;
     font-size: 24px;
     font-weight: 700;
   }
 
   .subtitle {
     margin: 0 0 24px 0;
-    color: #818384;
+    color: $text-muted;
     font-size: 14px;
-  }
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-
-  label {
-    margin-bottom: 6px;
-    color: #d7dadc;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-
-  input {
-    background-color: #272729;
-    border: 1px solid #343536;
-    border-radius: 4px;
-    padding: 12px 16px;
-    color: #ffffff;
-    font-size: 14px;
-    font-family: inherit;
-    transition: border-color 0.2s;
-
-    &:focus {
-      outline: none;
-      border-color: #4eb2b8;
-    }
-
-    &::placeholder {
-      color: #818384;
-    }
-  }
-
-  .field-error {
-    color: #ff585b;
-    font-size: 12px;
-    margin-top: 4px;
-  }
-}
-
-.error-message {
-  background-color: rgba(255, 88, 91, 0.1);
-  border: 1px solid #ff585b;
-  color: #ff585b;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.submit-btn {
-  width: 100%;
-  background-color: #4eb2b8;
-  color: #ffffff;
-  border: none;
-  border-radius: 20px;
-  padding: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-  margin-top: 8px;
-
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-  
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 }
 
@@ -111,15 +38,24 @@
   margin-top: 24px;
   text-align: center;
   font-size: 14px;
-  color: #d7dadc;
+  color: $text-secondary;
 
   a {
-    color: #4eb2b8;
+    color: $color-primary;
     text-decoration: none;
     font-weight: 600;
 
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  transition: opacity 0.2s, transform 0.1s;
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
   }
 }

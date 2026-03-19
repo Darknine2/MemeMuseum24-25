@@ -1,3 +1,6 @@
+// Stile specifico della Navbar.
+// .btn, .btn-primary, .btn-secondary, .btn-create sono in src/styles/_globals.scss
+
 .navbar {
   display: flex;
   align-items: center;
@@ -42,9 +45,11 @@
 .navbar-right {
   display: flex;
   align-items: center;
+  gap: 16px;
 }
 
-.auth-buttons, .user-profile {
+.auth-buttons,
+.user-profile {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -54,34 +59,4 @@
   color: #ffffff;
   font-weight: 600;
   font-size: 14px;
-}
-
-.btn {
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 0.9;
-  }
-}
-
-.btn-primary {
-  background-color: #4eb2b8;
-  color: #ffffff;
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: #d7dadc;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
 }
