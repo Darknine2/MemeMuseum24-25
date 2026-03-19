@@ -1,1 +1,58 @@
-<p>meme-page works!</p>
+<div class="page-container">
+  @if (loadingMeme) {
+    <div class="loading-state">
+      <span class="spinner"></span> Caricamento...
+    </div>
+  } @else if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  } @else if (meme) {
+    <div class="meme-container">
+      <!-- Meme card standalone: mostra la descrizione e non ha hover sull'intera card -->
+      <app-meme-card [meme]="meme" [showDescription]="true" [isStandalone]="true"></app-meme-card>
+
+      <!-- Sezione Commenti -->
+      <div class="comments-section">
+        <h3>Commenti ({{ comments.length }})</h3>
+
+        <!-- Form per nuovo commento (solo se loggato) -->
+        @if (authService.isAuthenticated()) {
+          <form class="comment-form" (ngSubmit)="submitComment()">
+            <div class="form-group">
+              <textarea
+                [(ngModel)]="newCommentText"
+                name="newCommentText"
+                placeholder="Aggiungi un commento..."
+                rows="3"
+                maxlength="500"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="!newCommentText.trim() || isSubmittingComment">
+                @if (isSubmittingComment) {
+                  <span class="spinner"></span> Pubblicazione...
+                } @else {
+                  Pubblica
+                }
+              </button>
+            </div>
+          </form>
+        } @else {
+          <div class="login-prompt">
+            <p>Fai <a routerLink="/login">Login</a> o <a routerLink="/register">Registrati</a> per poter commentare.</p>
+          </div>
+        }
+
+        <!-- Lista dei commenti -->
+        <div class="comments-list">
+          @for (comment of comments; track comment.id) {
+            <!-- Se memeId è undefied fallback a 0, ma se esiste lo passiamo -->
+            <app-comment-card [comment]="comment" [memeId]="meme.id!" (deleted)="onCommentDeleted($event)"></app-comment-card>
+          } @empty {
+            <div class="empty-comments">
+              <p>Nessun commento ancora. Sii il primo a commentare!</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

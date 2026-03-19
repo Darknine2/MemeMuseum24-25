@@ -47,9 +47,10 @@ memeRouter.get("/",
 
 // READ: Ottieni un singolo meme tramite ID
 memeRouter.get("/:memeId",
+    optionalAuthentication,
     // validateParamId('memeId'), // Validazione ID meme
     (req, res, next) => {
-        MemeController.getMemeById(req.params.memeId)
+        MemeController.getMemeById(req.params.memeId, req.username)
             .then(meme => res.json(meme))
             .catch(next);
     });

@@ -51,7 +51,7 @@ export class MemeController {
         const limit = 10; // Carica 10 meme alla volta
         const offset = (page - 1) * limit;
 
-        const whereClause = MemeController._buildDateFilter(queryParams);
+        const whereClause = MemeController._buildWhereClause(queryParams);
         const includeClause = MemeController._buildTagFilter(queryParams, currentUsername);
         const orderClause = MemeController._buildOrderClause(queryParams);
 
@@ -74,8 +74,18 @@ export class MemeController {
     }
 
     // Helper Functions per generazione query parametri
-    static _buildDateFilter(queryParams) {
+    static _buildWhereClause(queryParams) {
         const whereClause = {};
+
+        // Filtro di Ricerca (Titolo o Descrizione)
+        if (queryParams.search) {
+            const likeOp = process.env.DIALECT === 'postgres' ? Op.iLike : Op.like;
+            whereClause[Op.or] = [
+                { title: { [likeOp]: `%${queryParams.search}%` } },
+                { description: { [likeOp]: `%${queryParams.search}%` } }
+            ];
+        }
+
         // Filtro per Intervallo di Date (es. startDate e endDate)
         if (queryParams.startDate || queryParams.endDate) {
             whereClause.created_at = {};
@@ -156,8 +166,14 @@ export class MemeController {
     }
 
     // READ BY ID
-    static async getMemeById(memeId) {
-        const meme = await Meme.findByPk(memeId);
+    static async getMemeById(memeId, currentUsername = null) {
+        const includeClause = MemeController._buildTagFilter({}, currentUsername);
+        
+        const meme = await Meme.findOne({
+            where: { id: memeId },
+            include: includeClause
+        });
+        
         if (!meme) {
             const error = new Error("Meme not found");
             error.status = 404;

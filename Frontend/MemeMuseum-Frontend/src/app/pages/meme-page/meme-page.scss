@@ -1,0 +1,138 @@
+@use 'styles/variables' as *;
+
+.page-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  min-height: calc(100vh - 56px);
+}
+
+.meme-container {
+  width: 100%;
+  max-width: 640px;
+}
+
+// ==== Sezione Commenti ====
+.comments-section {
+  background-color: $surface-raised;
+  border: 1px solid $surface-border;
+  border-radius: $border-radius-card;
+  padding: 20px;
+  margin-top: 16px;
+
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+// Form commento
+.comment-form {
+  margin-bottom: 24px;
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  textarea {
+    width: 100%;
+    resize: vertical;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: $surface-elevated;
+    border: 1px solid $surface-border-alt;
+    color: $text-primary;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+    
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+// Messaggio info per fare login
+.login-prompt {
+  background-color: $surface-elevated;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 24px;
+  border: 1px solid $surface-border-alt;
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 14px;
+  }
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Messaggi di stato
+.empty-comments {
+  text-align: center;
+  padding: 30px 10px;
+  color: $text-muted;
+  font-size: 14px;
+  background-color: $surface-elevated;
+  border-radius: 8px;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: $text-muted;
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+// Spinner CSS
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ==== Mobile Responsive ====
+@media (max-width: 600px) {
+  .page-container {
+    padding: 10px;
+  }
+
+  .comments-section {
+    padding: 16px;
+    margin-top: 8px;
+  }
+}

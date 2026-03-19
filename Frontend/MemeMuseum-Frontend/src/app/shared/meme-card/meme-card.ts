@@ -1,20 +1,23 @@
 import { Component, inject, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Meme } from '../../../_services/backend/meme-backend-service/meme.type';
-import { MemeBackendService } from '../../../_services/backend/meme-backend-service/meme-backend-service';
+import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
+import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { RouterLink } from '@angular/router';
 
 type VoteType = 'up' | 'down' | null;
 
 @Component({
   selector: 'app-meme-card',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './meme-card.html',
   styleUrl: './meme-card.scss'
 })
 export class MemeCard implements OnInit, OnDestroy {
   @Input() meme: Meme | null = null;
+  @Input() showDescription: boolean = false;
+  @Input() isStandalone: boolean = false;
   userAvatar: string = "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_2.png";
 
   memeService = inject(MemeBackendService);

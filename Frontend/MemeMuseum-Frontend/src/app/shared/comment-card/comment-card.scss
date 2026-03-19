@@ -1,0 +1,68 @@
+@use 'styles/variables' as *;
+
+.comment-card {
+  padding: 14px 0;
+  border-bottom: 1px solid $surface-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+}
+
+.comment-meta {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  .comment-author {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-secondary;
+  }
+
+  .comment-time {
+    font-size: 11px;
+    color: $text-muted;
+  }
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 14px;
+  color: $text-secondary;
+  line-height: 1.5;
+  padding-left: 32px; // allineato sotto l'avatar
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: color $transition-base;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $color-danger;
+  }
+}

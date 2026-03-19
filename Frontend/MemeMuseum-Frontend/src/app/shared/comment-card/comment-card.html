@@ -1,0 +1,24 @@
+<div class="comment-card">
+  <div class="comment-header">
+    <img
+      src="https://www.redditstatic.com/avatars/defaults/v2/avatar_default_2.png"
+      alt="Avatar"
+      class="avatar" />
+    <div class="comment-meta">
+      <span class="comment-author">{{ comment.User?.username || 'Sconosciuto' }}</span>
+      <span class="comment-time">{{ comment.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+
+    @if (isOwner) {
+      <button class="delete-btn" (click)="onDelete()" aria-label="Elimina commento">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    }
+  </div>
+  <p class="comment-text">{{ comment.text }}</p>
+</div>

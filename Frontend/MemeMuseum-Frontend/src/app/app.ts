@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './layout/navbar/navbar';
-import { MemeCard } from './shared/components/meme-card/meme-card';
+import { MemeCard } from './shared/meme-card/meme-card';
 
 @Component({
   selector: 'app-root',
