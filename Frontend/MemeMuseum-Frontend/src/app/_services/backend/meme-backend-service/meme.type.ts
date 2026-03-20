@@ -9,6 +9,7 @@ export interface Meme {
     userId?: string;
     Author?: {
         username: string;
+        profile_picture: string;
     };
     Tags?: {
         id: number;

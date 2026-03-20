@@ -24,6 +24,11 @@ export function createModel(database) {
         created_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
+        },
+        profile_picture: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: "images/pictures/logo.png"
         }
     }, { timestamps: false });
 }

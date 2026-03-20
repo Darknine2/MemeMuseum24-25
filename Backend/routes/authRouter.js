@@ -1,5 +1,6 @@
 import express from "express";
 import { AuthController } from "../controllers/AuthController.js";
+import { uploadProfilePhoto } from "../middleware/uploadPhoto.js";
 
 export const authRouter = express.Router();
 
@@ -37,11 +38,46 @@ authRouter.post("/register",
 
 import { enforceAuthentication } from "../middleware/authorization.js";
 
+// Aggiorna username
+authRouter.put("/username",
+    enforceAuthentication,
+    (req, res, next) => {
+        const { password, newUsername } = req.body;
+
+        if (!password || !newUsername) {
+            const error = new Error("Current password and new username are required");
+            error.status = 400;
+            return next(error);
+        }
+
+        AuthController.changeUsername(req.username, password, newUsername)
+            .then((token) => res.json({ message: "Username updated successfully", token }))
+            .catch(next);
+    });
+
+// Aggiorna password
+authRouter.put("/password",
+    enforceAuthentication,
+    (req, res, next) => {
+        const { password, newPassword } = req.body;
+
+        if (!password || !newPassword) {
+            const error = new Error("Current password and new password are required");
+            error.status = 400;
+            return next(error);
+        }
+
+        AuthController.changePassword(req.username, password, newPassword)
+            .then((token) => res.json({ message: "Password updated successfully", token }))
+            .catch(next);
+    });
+
+// Manteniamo anche la vecchia rotta completa se mai dovesse servire
 authRouter.put("/",
     enforceAuthentication,
     (req, res, next) => {
         const { password, newUsername, newPassword } = req.body;
-        
+
         if (!password) {
             const error = new Error("Current password is required");
             error.status = 400;

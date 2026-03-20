@@ -21,6 +21,14 @@ export class AuthBackendService {
     return this.http.put(`${this.url}`, payload);
   }
 
+  changeUsername(payload: {password: string, newUsername: string}): Observable<any> {
+    return this.http.put(`${this.url}/username`, payload);
+  }
+
+  changePassword(payload: {password: string, newPassword: string}): Observable<any> {
+    return this.http.put(`${this.url}/password`, payload);
+  }
+
   deleteAccount(): Observable<any> {
     return this.http.delete(this.url);
   }

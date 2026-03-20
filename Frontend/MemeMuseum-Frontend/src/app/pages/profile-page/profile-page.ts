@@ -26,6 +26,8 @@ export class ProfilePage implements OnInit {
   isLoadingMemes: boolean = false;
 
   showCredentialsModal: boolean = false;
+  showDeleteModal: boolean = false;
+  modalType: 'username' | 'password' = 'username';
 
   ngOnInit() {
     if (!this.authService.isAuthenticated()) {
@@ -50,7 +52,8 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  openCredentialsModal() {
+  openCredentialsModal(type: 'username' | 'password') {
+    this.modalType = type;
     this.showCredentialsModal = true;
   }
 
@@ -58,16 +61,23 @@ export class ProfilePage implements OnInit {
     this.showCredentialsModal = false;
   }
 
-  onDeleteAccount() {
-    if (confirm("Sei sicuro di voler eliminare defintivamente il tuo account e tutti i tuoi post? L'azione è irreversibile.")) {
-      this.authBackend.deleteAccount().subscribe({
-        next: () => {
-          this.authService.logout();
-        },
-        error: (err) => {
-          alert("Impossibile eliminare l'account: " + (err.error?.message || err.message));
-        }
-      });
-    }
+  openDeleteModal() {
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+  }
+
+  confirmDeleteAccount() {
+    this.authBackend.deleteAccount().subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        alert("Impossibile eliminare l'account: " + (err.error?.message || err.message));
+      }
+    });
   }
 }

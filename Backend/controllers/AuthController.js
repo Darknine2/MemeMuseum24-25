@@ -31,6 +31,8 @@ export class AuthController {
     }
 
     static async updateUser(username, newUsername, password, newPassword) {
+
+        console.log(username, newUsername, password, newPassword);
         const user = await User.findByPk(username);
         if (!user) {
             const error = new Error("User not found");
@@ -45,6 +47,7 @@ export class AuthController {
             throw error;
         }
 
+        const updates = {};
         if (newUsername) {
             const existingUser = await User.findOne({ where: { username: newUsername } });
             if (existingUser) {
@@ -52,15 +55,63 @@ export class AuthController {
                 error.status = 409;
                 throw error;
             }
-            user.username = newUsername;
+            updates.username = newUsername;
         }
 
         if (newPassword) {
-            user.password = newPassword;
+            updates.password = newPassword;
         }
-        await user.save();
 
-        return AuthController.issueToken(user.username);
+        // Usiamo User.update() perché modificare la Primary Key (username) con .save() causa problemi
+        await User.update(updates, { where: { username: username } });
+
+        return AuthController.issueToken(newUsername || username);
+    }
+
+    static async changeUsername(username, password, newUsername) {
+        const user = await User.findByPk(username);
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        const check = await AuthController.checkCredentials(username, password);
+        if (!check) {
+            const error = new Error("Invalid credentials");
+            error.status = 401;
+            throw error;
+        }
+
+        const existingUser = await User.findOne({ where: { username: newUsername } });
+        if (existingUser) {
+            const error = new Error("Username already exists");
+            error.status = 409;
+            throw error;
+        }
+
+
+        await User.update({ username: newUsername }, { where: { username: username } });
+        return AuthController.issueToken(newUsername);
+    }
+
+    static async changePassword(username, password, newPassword) {
+        const user = await User.findByPk(username);
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        const check = await AuthController.checkCredentials(username, password);
+        if (!check) {
+            const error = new Error("Invalid credentials");
+            error.status = 401;
+            throw error;
+        }
+
+        await user.update({ password: newPassword });
+        return AuthController.issueToken(username);
     }
 
     static async deleteUser(username) {

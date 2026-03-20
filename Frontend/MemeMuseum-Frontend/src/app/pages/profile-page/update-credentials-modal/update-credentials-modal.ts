@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output, Input } from '@angular/core';
 import { AuthBackendService } from '../../../_services/backend/auth-backend-service/auth-backend-service';
 import { AuthService } from '../../../_services/auth-service/auth-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class UpdateCredentialsModal {
 
+  @Input() type: 'username' | 'password' = 'username';
   @Output() close = new EventEmitter<void>();
 
   authBackend = inject(AuthBackendService);
@@ -46,25 +47,39 @@ export class UpdateCredentialsModal {
 
     const { currentPassword, newUsername, newPassword, confirmPassword } = this.credForm.value;
 
-    if (!newUsername && !newPassword) {
-      this.updateError = "Devi specificare almeno un nuovo campo da aggiornare.";
-      return;
-    }
-
-    if (newPassword && newPassword !== confirmPassword) {
-      this.updateError = "La nuova password non combacia con la conferma.";
-      return;
+    if (this.type === 'username') {
+      if (!newUsername) {
+        this.updateError = "Devi specificare il nuovo username.";
+        return;
+      }
+    } else {
+      if (!newPassword) {
+        this.updateError = "Devi specificare una nuova password.";
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        this.updateError = "La nuova password non combacia con la conferma.";
+        return;
+      }
     }
 
     this.isUpdatingPassword = true;
 
-    const payload = {
-      password: currentPassword,
-      newUsername: newUsername || undefined,
-      newPassword: newPassword || undefined,
-    };
+    let updateObservable;
 
-    this.authBackend.updateCredentials(payload).subscribe({
+    if (this.type === 'username') {
+      updateObservable = this.authBackend.changeUsername({
+        password: currentPassword,
+        newUsername: newUsername!
+      });
+    } else {
+      updateObservable = this.authBackend.changePassword({
+        password: currentPassword,
+        newPassword: newPassword!
+      });
+    }
+
+    updateObservable.subscribe({
       next: (res: any) => {
         if (res.token) {
           this.authService.updateToken(res.token);

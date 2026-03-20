@@ -18,7 +18,6 @@ export class MemeCard implements OnInit, OnDestroy {
   @Input() meme: Meme | null = null;
   @Input() showDescription: boolean = false;
   @Input() isStandalone: boolean = false;
-  userAvatar: string = "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_2.png";
 
   memeService = inject(MemeBackendService);
 
@@ -30,6 +29,7 @@ export class MemeCard implements OnInit, OnDestroy {
   private voteSubscription!: Subscription;
 
   ngOnInit() {
+    console.log(this.meme?.Author?.profile_picture);
     // Imposta il voto iniziale se l'utente ha già votato questo meme
     if (this.meme?.Votes && this.meme.Votes.length > 0) {
       const userVote = this.meme.Votes[0].vote;

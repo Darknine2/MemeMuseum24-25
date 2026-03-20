@@ -16,21 +16,44 @@
         <h3>Impostazioni Account</h3>
         <p style="color: #818384; font-size: 14px; margin-bottom: 16px;">Modifica il tuo username o la tua password
           personale.</p>
-        <button class="btn btn-secondary" style="width: 100%;" (click)="openCredentialsModal()">Cambia
-          Credenziali</button>
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('username')">Cambia Username</button>
+          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('password')">Cambia Password</button>
+        </div>
       </div>
 
       <!-- MODALE CAMBIA CREDENZIALI -->
       @if (showCredentialsModal) {
-      <app-update-credentials-modal (close)="closeCredentialsModal()"></app-update-credentials-modal>
+      <app-update-credentials-modal [type]="modalType" (close)="closeCredentialsModal()"></app-update-credentials-modal>
       }
 
       <div class="danger-zone">
         <h3>Zona Pericolosa</h3>
         <p>L'eliminazione dell'account cancellerà in modo permanente il tuo profilo e cancellerà l'accesso alla gestione
           dei tuoi post.</p>
-        <button class="btn btn-danger" (click)="onDeleteAccount()">Elimina Account</button>
+        <button class="btn btn-danger" (click)="openDeleteModal()">Elimina Account</button>
       </div>
+
+      <!-- MODALE CONFERMA ELIMINAZIONE ACCOUNT -->
+      @if (showDeleteModal) {
+      <div class="modal-overlay" (click)="closeDeleteModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Conferma Eliminazione</h3>
+            <button class="close-btn" (click)="closeDeleteModal()">&times;</button>
+          </div>
+          <div class="modal-body" style="color: var(--text-secondary); line-height: 1.5; margin-bottom: 24px;">
+            <p>Sei sicuro di voler eliminare definitivamente il tuo account?</p>
+            <p style="color: #ff453a; font-weight: 600; margin-top: 8px;">Attenzione: L'azione è irreversibile e
+              comporterà la perdita di tutti i tuoi post nel Museum.</p>
+          </div>
+          <div class="modal-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button class="btn btn-secondary" (click)="closeDeleteModal()">Annulla</button>
+            <button class="btn btn-danger" (click)="confirmDeleteAccount()">Sì, Elimina Definitivamente</button>
+          </div>
+        </div>
+      </div>
+      }
     </aside>
 
     <!-- DESTRA: Feed dei meme -->

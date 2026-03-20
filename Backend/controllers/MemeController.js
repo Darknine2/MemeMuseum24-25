@@ -155,7 +155,7 @@ export class MemeController {
             {
                 model: User,
                 as: 'Author',
-                attributes: ['username']
+                attributes: ['username', 'profile_picture']
             }
         ];
 
@@ -258,7 +258,7 @@ export class MemeController {
 
     static async getMemeByUsername(username) {
         const includeClause = MemeController.getBaseIncludeClause(username);
-        const memes = await Meme.findAll({ 
+        const memes = await Meme.findAll({
             where: { userId: username },
             include: includeClause,
             order: [['created_at', 'DESC']],
@@ -279,8 +279,15 @@ export class MemeController {
         const seed = (d + m + y);
         const PseudoRandomSeed = BigInt(seed) * BigInt(1103515245);
 
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
         // 3. Conteggio dei meme nel database
-        const totalMemes = await Meme.count();
+        const totalMemes = await Meme.count({
+            where: {
+                created_at: { [Op.lt]: todayStart }
+            }
+        });
 
         if (totalMemes === 0) {
             const error = new Error("Nessun meme nell'archivio");

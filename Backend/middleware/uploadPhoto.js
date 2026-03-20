@@ -16,11 +16,33 @@ const storageMemePhoto = multer.diskStorage({
     }
 });
 
+const storageProfilePhoto = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // salviamo in una cartella temporanea
+        const uploadPath = path.join(process.cwd(), "images/profile");
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath); // <--- null = nessun errore, uploadPath = destinazione
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname); // <--- null = nessun errore, newName = nome del file finale
+    }
+});
+
 export const uploadMemePhoto = multer({
     storage: storageMemePhoto,
     limits: {
         fileSize: 5 * 1024 * 1024 // Limite di 5MB (in bytes)
     }
 });
+
+export const uploadProfilePhoto = multer({
+    storage: storageProfilePhoto,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // Limite di 5MB (in bytes)
+    }
+});
+
 
 

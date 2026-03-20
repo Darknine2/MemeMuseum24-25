@@ -108,6 +108,10 @@
   font-size: 14px;
 }
 
+.btn-icon:hover {
+  background-color: rgba(116, 35, 35, 0.822) !important;
+}
+
 // ---- Mobile responsive ----
 @media (max-width: 600px) {
   .navbar {
@@ -130,12 +134,12 @@
   .btn-create .btn-label {
     display: none;
   }
-  
+
   // Rendi il bottone centrale più compatto
   .btn-multicolor {
     padding: 6px;
     border-radius: 50%;
-    
+
     span {
       display: none; // Nasconde la scritta "Meme del Giorno"
     }
