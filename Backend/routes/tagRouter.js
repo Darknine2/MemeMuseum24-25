@@ -1,6 +1,7 @@
 import express from "express";
 import { TagController } from "../controllers/TagController.js";
 import { enforceAuthentication } from "../middleware/authorization.js";
+import { validateTagIdParam, validateTagBody } from "../middleware/validator/tagValidator.js";
 
 export const tagRouter = express.Router();
 
@@ -14,6 +15,7 @@ tagRouter.get("/tag",
 
 // READ: Ottieni un tag specifico tramite ID
 tagRouter.get("/tag/:tagId",
+    validateTagIdParam,
     (req, res, next) => {
         TagController.getTagById(req.params.tagId)
             .then(tag => res.json(tag))
@@ -23,6 +25,7 @@ tagRouter.get("/tag/:tagId",
 // CREATE: Crea un nuovo tag
 tagRouter.post("/tag",
     enforceAuthentication,
+    validateTagBody,
     (req, res, next) => {
         TagController.createTag(req.body)
             .then(newTag => res.status(201).json(newTag))
@@ -32,6 +35,8 @@ tagRouter.post("/tag",
 // UPDATE: Aggiorna un tag esistente
 tagRouter.put("/tag/:tagId",
     enforceAuthentication,
+    validateTagIdParam,
+    validateTagBody,
     (req, res, next) => {
         TagController.updateTag(req.params.tagId, req.body)
             .then(updatedTag => res.json(updatedTag))
@@ -41,6 +46,7 @@ tagRouter.put("/tag/:tagId",
 // DELETE: Elimina un tag
 tagRouter.delete("/tag/:tagId",
     enforceAuthentication,
+    validateTagIdParam,
     (req, res, next) => {
         TagController.deleteTag(req.params.tagId)
             .then(result => res.json(result))

@@ -5,9 +5,7 @@ import { uploadMemePhoto } from "../middleware/uploadPhoto.js";
 import { enforceAuthentication, enforceMemeOwnership, optionalAuthentication } from "../middleware/authorization.js";
 import { commentRouter } from "./commentRouter.js";
 import { voteRouter } from "./voteRouter.js";
-// Commentati poiché i middleware non sono ancora stati creati nel progetto
-// import { userContextMiddleware } from "../middleware/authMiddleware.js";
-// import { validateParamId, validateBody } from "../middleware/validationMiddleware.js";
+import { validateParamId, validateCreateMeme, validateUpdateMeme } from "../middleware/validator/memeValidator.js";
 
 export const memeRouter = express.Router();
 
@@ -20,7 +18,7 @@ memeRouter.use("/:memeId/vote", voteRouter);
 memeRouter.post("/",
     uploadMemePhoto.single("image"),
     enforceAuthentication,
-    // validateBody('memeCreateSchema'), // Validazione payload per la creazione
+    validateCreateMeme,
     (req, res, next) => {
 
         if (!req.file) {
@@ -29,7 +27,7 @@ memeRouter.post("/",
             throw error;
         }
 
-        const memeData = JSON.parse(req.body.memeBody);
+        const memeData = req.body.memeData;
 
         MemeController.createMeme(memeData, req.body.tags, req.username, req.file)
             .then(newMeme => res.status(201).json(newMeme))
@@ -65,7 +63,7 @@ memeRouter.get("/daily",
 // READ: Ottieni un singolo meme tramite ID
 memeRouter.get("/:memeId",
     optionalAuthentication,
-    // validateParamId('memeId'), // Validazione ID meme
+    validateParamId,
     (req, res, next) => {
         MemeController.getMemeById(req.params.memeId, req.username)
             .then(meme => res.json(meme))
@@ -77,8 +75,8 @@ memeRouter.put("/:memeId",
     enforceAuthentication,
     enforceMemeOwnership,
     uploadMemePhoto.single("image"),
-    // validateParamId('memeId'),
-    // validateBody('memeUpdateSchema'),
+    validateParamId,
+    validateUpdateMeme,
     (req, res, next) => {
 
         if (!req.file) {
@@ -87,7 +85,7 @@ memeRouter.put("/:memeId",
             throw error;
         }
 
-        const memeData = JSON.parse(req.body.memeBody);
+        const memeData = req.body.memeData;
 
         MemeController.updateMeme(req.params.memeId, memeData, req.file)
             .then(updatedMeme => res.json(updatedMeme))
@@ -98,7 +96,7 @@ memeRouter.put("/:memeId",
 memeRouter.delete("/:memeId",
     enforceAuthentication,
     enforceMemeOwnership,
-    // validateParamId('memeId'),
+    validateParamId,
     (req, res, next) => {
         MemeController.deleteMeme(req.params.memeId)
             .then(result => res.json(result))
