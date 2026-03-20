@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../_services/auth-service/auth-service';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
+import { FeedbackService } from '../../_services/feedback-service/feedback.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,7 @@ import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 export class Navbar {
   authService = inject(AuthService);
   memeService = inject(MemeBackendService);
+  feedbackService = inject(FeedbackService);
 
   dailyMeme: Meme | null = null;
 
@@ -30,6 +32,15 @@ export class Navbar {
     });
 
 
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/home']).then(() => {
+      setTimeout(() => {
+        this.feedbackService.show('Logout effettuato!', 'info');
+      }, 50);
+    });
   }
 
 

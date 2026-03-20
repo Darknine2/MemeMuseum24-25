@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,7 +23,10 @@ export class ProfilePage implements OnInit {
   router = inject(Router);
 
   myMemes: Meme[] = [];
+  totalUserMemes: number = 0;
   isLoadingMemes: boolean = false;
+  currentPage: number = 1;
+  totalPages: number = 1;
 
   showCredentialsModal: boolean = false;
   showDeleteModal: boolean = false;
@@ -35,14 +38,26 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    this.loadMyMemes();
+    this.loadMyMemes(1, true);
   }
 
-  loadMyMemes() {
+  loadMyMemes(page: number, resetList: boolean = false) {
+    if (this.isLoadingMemes) return;
     this.isLoadingMemes = true;
-    this.memeService.getMyMemes().subscribe({
-      next: (memes) => {
-        this.myMemes = memes || [];
+
+    this.memeService.getMyMemes(page).subscribe({
+      next: (response: any) => {
+        const newMemes = response.memes || [];
+        
+        if (resetList) {
+          this.myMemes = newMemes;
+        } else {
+          this.myMemes = [...this.myMemes, ...newMemes];
+        }
+        
+        this.currentPage = response.currentPage || page;
+        this.totalPages = response.totalPages || 1;
+        this.totalUserMemes = response.totalItems || this.myMemes.length;
         this.isLoadingMemes = false;
       },
       error: (err) => {
@@ -50,6 +65,21 @@ export class ProfilePage implements OnInit {
         this.isLoadingMemes = false;
       }
     });
+  }
+
+  // Listener sullo scroll della pagina per la paginazione infinita
+  @HostListener('window:scroll', [])
+  onScroll(): void {
+    if (this.isLoadingMemes || this.currentPage >= this.totalPages) {
+      return;
+    }
+    
+    const scrollPosition = (document.documentElement.scrollTop || document.body.scrollTop) + document.documentElement.clientHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    if(scrollPosition >= documentHeight - 100) {
+      this.loadMyMemes(this.currentPage + 1);
+    }
   }
 
   openCredentialsModal(type: 'username' | 'password') {

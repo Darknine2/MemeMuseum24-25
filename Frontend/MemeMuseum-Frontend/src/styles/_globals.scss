@@ -148,8 +148,74 @@
   }
 
   &-success {
-    background-color: rgba(78, 178, 184, 0.1);
-    border: 1px solid $color-primary;
-    color: $color-primary;
+    background-color: rgba(48, 209, 88, 0.1); // Green success
+    border: 1px solid #30d158;
+    color: #30d158;
   }
+}
+
+// ============================================================
+// Global Modal utilities
+// ============================================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background-color: $surface-raised;
+  border: 1px solid $surface-border;
+  border-radius: $border-radius-card;
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: modalFadeIn 0.2s ease-out;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h3 {
+      margin: 0;
+      color: $text-primary;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: $text-secondary;
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+
+      &:hover {
+        color: $text-primary;
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+  }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

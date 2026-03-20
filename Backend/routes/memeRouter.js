@@ -47,7 +47,7 @@ memeRouter.get("/",
 memeRouter.get("/user",
     enforceAuthentication,
     (req, res, next) => {
-        MemeController.getMemeByUsername(req.username)
+        MemeController.getMemeByUsername(req.username, req.query)
             .then(memes => res.json(memes))
             .catch(next);
     });

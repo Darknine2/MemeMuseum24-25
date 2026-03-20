@@ -35,7 +35,11 @@ export class LoginPage {
           this.router.navigate(['/']);
         },
         error: (err) => {
-          this.errorMessage = err.error?.error || 'Login fallito. Riprova.';
+          if (err.status === 401) {
+            this.errorMessage = 'Username o password errati.';
+          } else {
+            this.errorMessage = err.error?.error || 'Login fallito. Riprova.';
+          }
           this.feedbackService.show(this.errorMessage, 'error');
         }
       });

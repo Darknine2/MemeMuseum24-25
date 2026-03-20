@@ -78,7 +78,7 @@ export class MemeBackendService {
     return this.http.get<Meme>(`${this.url}/daily`);
   }
 
-  getMyMemes() {
-    return this.http.get<Meme[]>(`${this.url}/user`);
+  getMyMemes(page: number = 1) {
+    return this.http.get<any>(`${this.url}/user?page=${page}`);
   }
 }

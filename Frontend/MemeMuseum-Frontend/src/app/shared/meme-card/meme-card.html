@@ -80,4 +80,24 @@
     </button>
   </div>
 </article>
+
+@if (isAuthModalVisible) {
+<div class="modal-overlay" (click)="closeAuthModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Effettua l'accesso</h3>
+      <button class="close-btn" (click)="closeAuthModal()">&times;</button>
+    </div>
+    
+    <div class="modal-body" style="margin-bottom: 24px; text-align: center;">
+      <p style="color: #a0a0ab; font-size: 15px; margin: 0;">Devi essere autenticato per poter votare un meme.</p>
+    </div>
+
+    <div class="modal-actions" style="display: flex; gap: 12px;">
+      <button type="button" class="btn btn-secondary" style="flex: 1;" (click)="closeAuthModal()">Annulla</button>
+      <button type="button" class="btn btn-primary" style="flex: 1;" (click)="goToLogin()">Vai al Login</button>
+    </div>
+  </div>
+</div>
+}
 }

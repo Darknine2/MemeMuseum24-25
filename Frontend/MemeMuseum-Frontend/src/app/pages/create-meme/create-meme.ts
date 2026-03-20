@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
+import { MemeRequest } from '../../_services/backend/meme-backend-service/meme-request.type';
+import { FeedbackService } from '../../_services/feedback-service/feedback.service';
 
 @Component({
   selector: 'app-create-meme',
@@ -13,6 +15,7 @@ import { MemeBackendService } from '../../_services/backend/meme-backend-service
 export class CreateMeme {
   private memeService = inject(MemeBackendService);
   private router = inject(Router);
+  private feedbackService = inject(FeedbackService);
 
   // Form fields
   title: string = '';
@@ -31,6 +34,14 @@ export class CreateMeme {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+      this.errorMessage = 'Formato file non supportato. Inserisci un\'immagine.';
+      this.selectedFile = null;
+      this.imagePreviewUrl = null;
+      return;
+    }
+
+    this.errorMessage = '';
     this.selectedFile = file;
 
     // Generate the local preview URL
@@ -50,7 +61,16 @@ export class CreateMeme {
     event.preventDefault();
     event.stopPropagation();
     const file = event.dataTransfer?.files[0];
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.errorMessage = 'Formato file non supportato. Inserisci un\'immagine.';
+      this.selectedFile = null;
+      this.imagePreviewUrl = null;
+      return;
+    }
+
+    this.errorMessage = '';
     this.selectedFile = file;
 
     const reader = new FileReader();
@@ -84,7 +104,7 @@ export class CreateMeme {
   }
 
   canSubmit(): boolean {
-    return !!this.title.trim() && !!this.selectedFile && !this.isSubmitting;
+    return this.title.trim().length > 0 && this.selectedFile !== null && !this.isSubmitting;
   }
 
   onSubmit() {
@@ -93,13 +113,16 @@ export class CreateMeme {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.memeService.createMeme({
+    const memeRequest: MemeRequest = {
       title: this.title.trim(),
       description: this.description.trim(),
       image: this.selectedFile!,
       tags: this.tags
-    }).subscribe({
+    }
+
+    this.memeService.createMeme(memeRequest).subscribe({
       next: () => {
+        this.feedbackService.show('Meme caricato con successo!', 'success');
         this.router.navigate(['/home']);
       },
       error: (err) => {

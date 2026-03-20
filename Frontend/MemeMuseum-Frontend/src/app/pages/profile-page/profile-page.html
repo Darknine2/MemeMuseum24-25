@@ -2,10 +2,10 @@
 
   <div class="profile-header">
     <div class="avatar-large">
-      <img src="https://www.redditstatic.com/avatars/defaults/v2/avatar_default_2.png" alt="Avatar">
+      <img src="http://localhost:3000/+ " alt="Avatar">
     </div>
     <h2 class="username">@{{ authService.user() }}</h2>
-    <p class="meme-count">{{ myMemes.length }} Meme caricati nel Museum</p>
+    <p class="meme-count">{{ totalUserMemes }} Meme caricati nel Museum</p>
   </div>
 
   <div class="profile-layout">
@@ -17,8 +17,10 @@
         <p style="color: #818384; font-size: 14px; margin-bottom: 16px;">Modifica il tuo username o la tua password
           personale.</p>
         <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('username')">Cambia Username</button>
-          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('password')">Cambia Password</button>
+          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('username')">Cambia
+            Username</button>
+          <button class="btn btn-secondary" style="flex: 1;" (click)="openCredentialsModal('password')">Cambia
+            Password</button>
         </div>
       </div>
 
@@ -63,15 +65,13 @@
         <a routerLink="/create-meme" class="btn btn-secondary">Nuovo</a>
       </div>
 
-      @if (isLoadingMemes) {
-      <p class="loading-text">Caricamento storico post...</p>
-      } @else if (myMemes.length > 0) {
+      @if (myMemes.length > 0) {
       <div class="meme-list">
         @for (meme of myMemes; track meme.id) {
         <app-meme-card [meme]="meme"></app-meme-card>
         }
       </div>
-      } @else {
+      } @else if (!isLoadingMemes) {
       <div class="empty-state">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
@@ -83,6 +83,10 @@
         <p>Il tuo spazio nel Museum è ancora vuoto.</p>
         <button class="btn btn-primary" routerLink="/create-meme">Carica il tuo primo meme</button>
       </div>
+      }
+
+      @if (isLoadingMemes) {
+      <p class="loading-text" style="text-align: center; padding: 20px; color: #818384;">Caricamento storico post...</p>
       }
     </main>
 

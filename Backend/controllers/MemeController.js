@@ -256,15 +256,28 @@ export class MemeController {
         await fs.rmdir(memeFolder);
     }
 
-    static async getMemeByUsername(username) {
+    static async getMemeByUsername(username, queryParams = {}) {
+        const page = parseInt(queryParams.page) || 1;
+        const limit = 10; // Carica 10 meme alla volta
+        const offset = (page - 1) * limit;
+
         const includeClause = MemeController.getBaseIncludeClause(username);
-        const memes = await Meme.findAll({
+        
+        const { count, rows } = await Meme.findAndCountAll({
             where: { userId: username },
             include: includeClause,
+            limit: limit,
+            offset: offset,
             order: [['created_at', 'DESC']],
             distinct: true
         });
-        return memes;
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            memes: rows
+        };
     }
 
     static async getMemeOfTheDay() {

@@ -4,7 +4,8 @@ import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../../_services/auth-service/auth-service';
 
 type VoteType = 'up' | 'down' | null;
 
@@ -20,6 +21,11 @@ export class MemeCard implements OnInit, OnDestroy {
   @Input() isStandalone: boolean = false;
 
   memeService = inject(MemeBackendService);
+  authService = inject(AuthService);
+  router = inject(Router);
+
+  // Stato del modale di Login
+  isAuthModalVisible: boolean = false;
 
   // Stato del voto corrente dell'utente per questo specifico meme
   currentVote: VoteType = null;
@@ -55,6 +61,10 @@ export class MemeCard implements OnInit, OnDestroy {
   onVote(type: 'up' | 'down') {
     if (!this.meme) return;
 
+    if (!this.authService.isAuthenticated()) {
+      this.isAuthModalVisible = true;
+      return;
+    }
 
     if (this.currentVote === type) {
       // Clicca lo stesso tasto: Annulla il voto
@@ -105,4 +115,14 @@ export class MemeCard implements OnInit, OnDestroy {
     }
     // this.memeService.voteMeme(this.meme.id, actionStr).subscribe(...)
   }
+
+  closeAuthModal() {
+    this.isAuthModalVisible = false;
+  }
+
+  goToLogin() {
+    this.isAuthModalVisible = false;
+    this.router.navigate(['/login']);
+  }
 }
+

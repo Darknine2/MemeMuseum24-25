@@ -28,7 +28,10 @@ export class RegisterPage {
 
   registerForm = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
-    password: ['', [Validators.required, Validators.minLength(4)]],
+    password: ['', [
+      Validators.required,
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/)
+    ]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: passwordMatchValidator });
 
@@ -44,8 +47,15 @@ export class RegisterPage {
           this.router.navigate(['/']);
         },
         error: (err) => {
-          this.errorMessage = err.error?.error || 'Registrazione fallita. Riprova.';
-          this.feedbackService.show(this.errorMessage, 'error');
+          if (err.status === 409) {
+            this.registerForm.get('username')?.setErrors({ alreadyExists: true });
+            this.feedbackService.show('Questo username è già in uso', 'error');
+            this.errorMessage = 'Username non disponibile.';
+          } else {
+            const msg = err.error?.description || err.error?.error || 'Registrazione fallita. Riprova.';
+            this.errorMessage = msg;
+            this.feedbackService.show(msg, 'error');
+          }
         }
       });
     }
