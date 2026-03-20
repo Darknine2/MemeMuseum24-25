@@ -1,12 +1,12 @@
 import express from "express";
 import { AuthController } from "../controllers/AuthController.js";
 import { uploadProfilePhoto } from "../middleware/uploadPhoto.js";
-import { 
-    validateLogin, 
-    validateRegister, 
-    validateChangeUsername, 
-    validateChangePassword, 
-    validateUpdateUser 
+import {
+    validateLogin,
+    validateRegister,
+    validateChangeUsername,
+    validateChangePassword,
+    validateUpdateUser
 } from "../middleware/validator/authValidator.js";
 
 export const authRouter = express.Router();
@@ -59,6 +59,17 @@ authRouter.put("/password",
             .catch(next);
     });
 
+authRouter.put("/profile-picture",
+    enforceAuthentication,
+    uploadProfilePhoto.single("profilePicture"),
+    (req, res, next) => {
+        const username = req.username;
+
+        AuthController.updateProfilePicture(username, req.file)
+            .then((token) => res.json({ message: "Profile picture updated successfully", token }))
+            .catch(next);
+    });
+
 // Manteniamo anche la vecchia rotta completa se mai dovesse servire
 authRouter.put("/",
     enforceAuthentication,
@@ -79,3 +90,10 @@ authRouter.delete("/",
             .then(() => res.json({ message: "Account deleted successfully" }))
             .catch(next);
     });
+
+// READ: Ottieni informazioni pubbliche utente
+authRouter.get("/:username", (req, res, next) => {
+    AuthController.getUser(req.params.username)
+        .then(user => res.json(user))
+        .catch(next);
+});

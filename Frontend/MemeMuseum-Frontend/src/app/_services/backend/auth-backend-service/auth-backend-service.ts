@@ -32,4 +32,14 @@ export class AuthBackendService {
   deleteAccount(): Observable<any> {
     return this.http.delete(this.url);
   }
+
+  updateProfilePicture(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+    return this.http.put(`${this.url}/profile-picture`, formData);
+  }
+
+  getUserInfo(username: string): Observable<any> {
+    return this.http.get(`${this.url}/${username}`);
+  }
 }

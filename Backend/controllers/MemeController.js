@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import fs from "fs/promises";
 import path from "path";
 import { TagController } from "./TagController.js";
+import { PhotoService } from "../services/PhotoService.js";
 
 export class MemeController {
 
@@ -190,7 +191,7 @@ export class MemeController {
     }
 
     // UPDATE BY ID
-    static async updateMeme(memeId, updateData, file) {
+    static async updateMeme(memeId, updateData, tags, file) {
         const meme = await Meme.findByPk(memeId);
         if (!meme) {
             const error = new Error("Meme not found");
@@ -198,13 +199,23 @@ export class MemeController {
             throw error;
         }
 
-        // update
         await meme.update(updateData);
         if (file) {
-            await MemeController.deletePhoto(meme.image_path);
+            await MemeController.deletePhoto(meme);
             await MemeController.uploadMemePhoto(file, meme.id);
-            await meme.reload();
         }
+
+        // Rimuove istantaneamente ogni singola associazione di tag 
+        await meme.setTags([]);
+
+        const tagsArray = tags ? (Array.isArray(tags) ? tags : [tags]) : [];
+
+        if (tagsArray.length > 0) {
+            await TagController.addTagsToMeme(meme.id, tagsArray);
+        }
+
+        // Ricarichiamo con le nuove join
+        await meme.reload({ include: MemeController.getBaseIncludeClause() });
         return meme;
     }
 
@@ -232,28 +243,16 @@ export class MemeController {
             throw error;
         }
 
-        // Percorso per la nuova cartella images/memes/{id}
-        const memeFolder = path.join(process.cwd(), "images", "memes", String(memeId));
-
-        // Creiamo la cartella se non esiste
-        await fs.mkdir(memeFolder, { recursive: true });
-
-        // Spostiamo il file dalla cartella di upload temporanea alla cartella finale
-        const newPath = path.join(memeFolder, file.filename);
-        await fs.rename(file.path, newPath);
-
-        // Aggiorniamo il path dell'immagine nel database
-        meme.image_path = `images/memes/${memeId}/${file.filename}`;
+        meme.image_path = await PhotoService.uploadPhoto(file, "memes", memeId);
         await meme.save();
 
         return meme;
     }
 
     static async deletePhoto(memeObject) {
-        const memeFolder = path.join(process.cwd(), "images", "memes", String(memeObject.id));
-        const memePath = memeObject.image_path;
-        await fs.unlink(memePath);
-        await fs.rmdir(memeFolder);
+        if (memeObject && memeObject.image_path) {
+            await PhotoService.deletePhoto("memes", memeObject.id, memeObject.image_path);
+        }
     }
 
     static async getMemeByUsername(username, queryParams = {}) {
@@ -262,7 +261,7 @@ export class MemeController {
         const offset = (page - 1) * limit;
 
         const includeClause = MemeController.getBaseIncludeClause(username);
-        
+
         const { count, rows } = await Meme.findAndCountAll({
             where: { userId: username },
             include: includeClause,

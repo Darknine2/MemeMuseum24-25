@@ -1,6 +1,7 @@
 import { User } from "../models/Database.js";
 import Jwt from "jsonwebtoken";
 import { createHash } from "crypto";
+import { PhotoService } from "../services/PhotoService.js";
 
 export class AuthController {
 
@@ -114,6 +115,7 @@ export class AuthController {
         return AuthController.issueToken(username);
     }
 
+
     static async deleteUser(username) {
         const user = await User.findByPk(username);
         if (!user) {
@@ -124,6 +126,35 @@ export class AuthController {
         await user.destroy();
     }
 
+    static async updateProfilePicture(username, file) {
+        const user = await User.findByPk(username);
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        if (user.profile_picture && user.profile_picture !== "images/profiles/default.png") {
+            await PhotoService.deletePhoto("profiles", username, user.profile_picture);
+        }
+
+        const newPath = await PhotoService.uploadPhoto(file, "profiles", username);
+        await user.update({ profile_picture: newPath });
+
+        return AuthController.issueToken(username);
+    }
+
+    static async getUser(username) {
+        const user = await User.findByPk(username, {
+            attributes: ['username', 'profile_picture']
+        });
+        if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+        return user;
+    }
 
     static async checkCredentials(username, password) {
 

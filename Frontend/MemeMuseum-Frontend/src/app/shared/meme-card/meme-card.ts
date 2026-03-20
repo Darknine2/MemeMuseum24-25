@@ -124,5 +124,45 @@ export class MemeCard implements OnInit, OnDestroy {
     this.isAuthModalVisible = false;
     this.router.navigate(['/login']);
   }
+
+  showOptions: boolean = false;
+  showDeleteModal: boolean = false;
+
+  toggleOptions(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.showOptions = !this.showOptions;
+  }
+
+  navigateToUpdate(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.router.navigate(['/update-meme', this.meme?.id]);
+  }
+
+  openDeleteModal(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.showOptions = false;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+  }
+
+  confirmDelete() {
+    if (!this.meme?.id) return;
+    this.memeService.deleteMeme(this.meme.id).subscribe({
+      next: () => {
+        this.showDeleteModal = false;
+        window.location.reload(); 
+      },
+      error: (e) => {
+        alert("Errore durante l'eliminazione: " + (e.error?.message || e.message));
+        this.showDeleteModal = false;
+      }
+    });
+  }
 }
 

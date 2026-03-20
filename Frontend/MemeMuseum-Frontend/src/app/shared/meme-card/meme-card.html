@@ -6,18 +6,30 @@
     <div class="card-header">
       <div class="header-left">
         <img [src]="'http://localhost:3000/' + meme.Author?.profile_picture" alt="Avatar" class="avatar" />
-        <span class="author">{{ meme.Author?.username || 'Sconosciuto' }}</span>
+        <span class="author" [routerLink]="['/profile', meme.Author?.username]">{{ meme.Author?.username ||
+          'Sconosciuto' }}</span>
         <span class="dot">•</span>
         <span class="time-ago">{{ meme.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
-      <button class="more-options-btn" aria-label="Altre opzioni">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="1.5"></circle>
-          <circle cx="19" cy="12" r="1.5"></circle>
-          <circle cx="5" cy="12" r="1.5"></circle>
-        </svg>
-      </button>
+
+      @if (authService.user() === meme.Author?.username) {
+      <div class="options-container" style="position: relative;" (click)="$event.stopPropagation(); $event.preventDefault()">
+        <button class="more-options-btn" (click)="toggleOptions($event)" aria-label="Altre opzioni">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="19" cy="12" r="1.5"></circle>
+            <circle cx="5" cy="12" r="1.5"></circle>
+          </svg>
+        </button>
+        @if (showOptions) {
+        <div class="dropdown-menu" style="position: absolute; right: 0; top: 100%; background: #222; border: 1px solid #333; border-radius: 8px; z-index: 10; padding: 4px 0; min-width: 120px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          <!-- Evita conflitti col routerLink usando un click handler per la Modifica -->
+          <button (click)="navigateToUpdate($event)" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; font-size: 14px; color: #fff; cursor: pointer;">Modifica</button>
+          <button (click)="openDeleteModal($event)" style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; font-size: 14px; color: #ff453a; cursor: pointer;">Rimuovi</button>
+        </div>
+        }
+      </div>
+      }
     </div>
 
     <!-- Contenuto principale -->
@@ -88,7 +100,7 @@
       <h3>Effettua l'accesso</h3>
       <button class="close-btn" (click)="closeAuthModal()">&times;</button>
     </div>
-    
+
     <div class="modal-body" style="margin-bottom: 24px; text-align: center;">
       <p style="color: #a0a0ab; font-size: 15px; margin: 0;">Devi essere autenticato per poter votare un meme.</p>
     </div>
@@ -96,6 +108,24 @@
     <div class="modal-actions" style="display: flex; gap: 12px;">
       <button type="button" class="btn btn-secondary" style="flex: 1;" (click)="closeAuthModal()">Annulla</button>
       <button type="button" class="btn btn-primary" style="flex: 1;" (click)="goToLogin()">Vai al Login</button>
+    </div>
+  </div>
+</div>
+}
+
+@if (showDeleteModal) {
+<div class="modal-overlay" (click)="closeDeleteModal()">
+  <div class="modal-content" (click)="$event.stopPropagation(); $event.preventDefault();">
+    <div class="modal-header">
+      <h3 style="margin: 0;">Conferma Rimozione</h3>
+      <button class="close-btn" style="background:none; border:none; color:white; font-size: 20px; cursor: pointer;" (click)="closeDeleteModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="margin: 16px 0;">
+      <p style="color: #a0a0ab;">Sei sicuro di voler eliminare in modo permanente questo meme?</p>
+    </div>
+    <div class="modal-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn btn-secondary" (click)="closeDeleteModal()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #444; background: transparent; color: white;">Annulla</button>
+      <button class="btn btn-danger" (click)="confirmDelete()" style="padding: 8px 16px; border-radius: 8px; background: rgba(255,69,58,0.2); border: 1px solid rgba(255, 69, 58, 0.5); color:#ff453a;">Elimina Definitivamente</button>
     </div>
   </div>
 </div>

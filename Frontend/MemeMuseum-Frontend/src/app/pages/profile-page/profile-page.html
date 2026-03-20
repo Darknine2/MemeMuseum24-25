@@ -1,16 +1,27 @@
 <div class="profile-container">
 
   <div class="profile-header">
-    <div class="avatar-large">
-      <img src="http://localhost:3000/+ " alt="Avatar">
+    <div class="avatar-wrapper"
+      style="position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
+      <div class="avatar-large">
+        <img [src]="'http://localhost:3000/' + profilePicture" alt="Avatar" style="display: block;">
+      </div>
+      @if (isMyProfile) {
+      <button class="btn btn-secondary btn-sm" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;"
+        (click)="fileInput.click()">
+        Modifica foto
+      </button>
+      <input #fileInput type="file" accept="image/*" hidden (change)="onProfilePictureSelected($event)" />
+      }
     </div>
-    <h2 class="username">@{{ authService.user() }}</h2>
+    <h2 class="username">@{{ targetUsername }}</h2>
     <p class="meme-count">{{ totalUserMemes }} Meme caricati nel Museum</p>
   </div>
 
   <div class="profile-layout">
 
     <!-- SINISTRA: Impostazioni Profilo e Danger Zone -->
+    @if (isMyProfile) {
     <aside class="sidebar-settings">
       <div class="settings-card">
         <h3>Impostazioni Account</h3>
@@ -57,12 +68,17 @@
       </div>
       }
     </aside>
+    }
 
     <!-- DESTRA: Feed dei meme -->
-    <main class="feed-memes">
+    <main class="feed-memes" [class.centered-feed]="!isMyProfile">
       <div class="feed-header">
+        @if (isMyProfile) {
         <h3>I tuoi Meme</h3>
         <a routerLink="/create-meme" class="btn btn-secondary">Nuovo</a>
+        } @else {
+        <h3>Meme caricati dall'utente</h3>
+        }
       </div>
 
       @if (myMemes.length > 0) {

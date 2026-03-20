@@ -78,7 +78,28 @@ export class MemeBackendService {
     return this.http.get<Meme>(`${this.url}/daily`);
   }
 
-  getMyMemes(page: number = 1) {
-    return this.http.get<any>(`${this.url}/user?page=${page}`);
+  getMyMemes(username: string, page: number = 1) {
+    return this.http.get<any>(`${this.url}/user/${encodeURIComponent(username)}?page=${page}`);
+  }
+
+  deleteMeme(memeId: number) {
+    return this.http.delete(`${this.url}/${memeId}`);
+  }
+
+  updateMeme(id: number, meme: MemeRequest) {
+    const formData = new FormData();
+    if (meme.image) {
+      formData.append('image', meme.image);
+    }
+    formData.append('memeBody', JSON.stringify({
+      title: meme.title,
+      description: meme.description
+    }));
+    if (meme.tags && meme.tags.length > 0) {
+      meme.tags.forEach(tag => {
+        formData.append('tags', tag);
+      });
+    }
+    return this.http.put(`${this.url}/${id}`, formData);
   }
 }

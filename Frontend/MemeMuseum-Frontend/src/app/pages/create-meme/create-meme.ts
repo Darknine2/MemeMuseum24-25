@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { MemeRequest } from '../../_services/backend/meme-backend-service/meme-request.type';
 import { FeedbackService } from '../../_services/feedback-service/feedback.service';
@@ -12,9 +12,10 @@ import { FeedbackService } from '../../_services/feedback-service/feedback.servi
   templateUrl: './create-meme.html',
   styleUrl: './create-meme.scss',
 })
-export class CreateMeme {
+export class CreateMeme implements OnInit {
   private memeService = inject(MemeBackendService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private feedbackService = inject(FeedbackService);
 
   // Form fields
@@ -25,9 +26,34 @@ export class CreateMeme {
   selectedFile: File | null = null;
   imagePreviewUrl: string | null = null;
 
+  // Edit Mode state
+  isEditMode: boolean = false;
+  editMemeId: number | null = null;
+
   // UI state
   isSubmitting: boolean = false;
   errorMessage: string = '';
+
+  ngOnInit() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.isEditMode = true;
+      this.editMemeId = parseInt(idParam, 10);
+      
+      this.memeService.getMemeById(this.editMemeId).subscribe({
+        next: (meme) => {
+          this.title = meme.title;
+          this.description = meme.description || '';
+          this.tags = meme.Tags?.map(t => t.name) || [];
+          this.imagePreviewUrl = 'http://localhost:3000/' + meme.image_path;
+        },
+        error: () => {
+          this.feedbackService.show("Impossibile caricare il meme da modificare", "error");
+          this.router.navigate(['/home']);
+        }
+      });
+    }
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -104,6 +130,9 @@ export class CreateMeme {
   }
 
   canSubmit(): boolean {
+    if (this.isEditMode) {
+      return this.title.trim().length > 0 && !this.isSubmitting;
+    }
     return this.title.trim().length > 0 && this.selectedFile !== null && !this.isSubmitting;
   }
 
@@ -116,19 +145,32 @@ export class CreateMeme {
     const memeRequest: MemeRequest = {
       title: this.title.trim(),
       description: this.description.trim(),
-      image: this.selectedFile!,
+      image: this.selectedFile as any,
       tags: this.tags
     }
 
-    this.memeService.createMeme(memeRequest).subscribe({
-      next: () => {
-        this.feedbackService.show('Meme caricato con successo!', 'success');
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message || 'Errore durante il caricamento del meme.';
-        this.isSubmitting = false;
-      }
-    });
+    if (this.isEditMode && this.editMemeId) {
+      this.memeService.updateMeme(this.editMemeId, memeRequest).subscribe({
+        next: () => {
+          this.feedbackService.show('Meme aggiornato con successo!', 'success');
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message || 'Errore durante l\'aggiornamento del meme.';
+          this.isSubmitting = false;
+        }
+      });
+    } else {
+      this.memeService.createMeme(memeRequest).subscribe({
+        next: () => {
+          this.feedbackService.show('Meme caricato con successo!', 'success');
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message || 'Errore durante il caricamento del meme.';
+          this.isSubmitting = false;
+        }
+      });
+    }
   }
 }

@@ -44,10 +44,10 @@ memeRouter.get("/",
     });
 
 // READ: Ottieni tutti i meme di un utente specifico
-memeRouter.get("/user",
-    enforceAuthentication,
+memeRouter.get("/user/:username",
+    optionalAuthentication,
     (req, res, next) => {
-        MemeController.getMemeByUsername(req.username, req.query)
+        MemeController.getMemeByUsername(req.params.username, req.query)
             .then(memes => res.json(memes))
             .catch(next);
     });
@@ -79,15 +79,10 @@ memeRouter.put("/:memeId",
     validateUpdateMeme,
     (req, res, next) => {
 
-        if (!req.file) {
-            const error = new Error("No file uploaded");
-            error.status = 400;
-            throw error;
-        }
+        const unparsedData = req.body.memeData || req.body.memeBody;
+        const memeData = typeof unparsedData === 'string' ? JSON.parse(unparsedData) : (unparsedData || {});
 
-        const memeData = req.body.memeData;
-
-        MemeController.updateMeme(req.params.memeId, memeData, req.file)
+        MemeController.updateMeme(req.params.memeId, memeData, req.body.tags, req.file)
             .then(updatedMeme => res.json(updatedMeme))
             .catch(next);
     });

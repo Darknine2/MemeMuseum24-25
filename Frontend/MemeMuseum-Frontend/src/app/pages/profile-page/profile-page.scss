@@ -175,6 +175,12 @@
     }
   }
 
+  &.centered-feed .feed-header {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .loading-text {
     text-align: center;
     color: $text-muted;
