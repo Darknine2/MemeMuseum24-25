@@ -9,9 +9,7 @@ import { tagRouter } from "./routes/tagRouter.js";
 import path from "path";
 import 'dotenv/config.js';
 
-initDatabase();
-
-const app = express(); // creates an express application
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Register the morgan logging middleware, use the 'dev' format
@@ -35,5 +33,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-
-app.listen(PORT);
+initDatabase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT}`);
+    });
+});
