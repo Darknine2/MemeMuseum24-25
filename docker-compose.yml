@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: meme-museum-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: caruso
+      POSTGRES_DB: MemeMuseum
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: meme-museum-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_CONNECTION_URI=postgres://postgres:caruso@db:5432/MemeMuseum
+      - DIALECT=postgres
+      - TOKEN_SECRET=your-secret-key
+    depends_on:
+      - db
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Frontend/MemeMuseum-Frontend
+      dockerfile: Dockerfile
+    container_name: meme-museum-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    volumes:
+      - ./Frontend/MemeMuseum-Frontend:/app
+      - /app/node_modules
+      - /app/.angular
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
