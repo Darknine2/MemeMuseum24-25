@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthBackendService } from '../../_services/backend/auth-backend-service/auth-backend-service';
 import { AuthService } from '../../_services/auth-service/auth-service';
+import { FeedbackService } from '../../_services/feedback-service/feedback.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginPage {
   private authBackend = inject(AuthBackendService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private feedbackService = inject(FeedbackService);
 
   loginForm = this.fb.group({
     username: ['', Validators.required],
@@ -29,10 +31,12 @@ export class LoginPage {
       this.authBackend.login(this.loginForm.value as any).subscribe({
         next: (res) => {
           this.authService.updateToken(res.token);
+          this.feedbackService.show('Login effettuato con successo!', 'success');
           this.router.navigate(['/']);
         },
         error: (err) => {
           this.errorMessage = err.error?.error || 'Login fallito. Riprova.';
+          this.feedbackService.show(this.errorMessage, 'error');
         }
       });
     }
