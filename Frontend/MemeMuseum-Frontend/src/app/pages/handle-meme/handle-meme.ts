@@ -5,18 +5,21 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { MemeRequest } from '../../_services/backend/meme-backend-service/meme-request.type';
 import { FeedbackService } from '../../_services/feedback-service/feedback.service';
+import { ImageService } from '../../_services/image-service/image-service';
+import { TagField } from '../../shared/tag-field/tag-field';
 
 @Component({
-  selector: 'app-create-meme',
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './create-meme.html',
-  styleUrl: './create-meme.scss',
+  selector: 'app-handle-meme',
+  imports: [CommonModule, FormsModule, RouterLink, TagField],
+  templateUrl: './handle-meme.html',
+  styleUrl: './handle-meme.scss',
 })
-export class CreateMeme implements OnInit {
+export class HandleMemeComponent implements OnInit {
   private memeService = inject(MemeBackendService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private feedbackService = inject(FeedbackService);
+  private imageService = inject(ImageService);
 
   // Form fields
   title: string = '';
@@ -45,7 +48,7 @@ export class CreateMeme implements OnInit {
           this.title = meme.title;
           this.description = meme.description || '';
           this.tags = meme.Tags?.map(t => t.name) || [];
-          this.imagePreviewUrl = 'http://localhost:3000/' + meme.image_path;
+          this.imagePreviewUrl = this.imageService.getPathBackend(meme.image_path);
         },
         error: () => {
           this.feedbackService.show("Impossibile caricare il meme da modificare", "error");
@@ -109,24 +112,6 @@ export class CreateMeme implements OnInit {
   removeImage() {
     this.selectedFile = null;
     this.imagePreviewUrl = null;
-  }
-
-  addTag() {
-    const tag = this.tagInput.trim().toLowerCase();
-    if (!tag || this.tags.includes(tag) || this.tags.length >= 5) return;
-    this.tags.push(tag);
-    this.tagInput = '';
-  }
-
-  onTagKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' || event.key === ',') {
-      event.preventDefault();
-      this.addTag();
-    }
-  }
-
-  removeTag(tag: string) {
-    this.tags = this.tags.filter(t => t !== tag);
   }
 
   canSubmit(): boolean {

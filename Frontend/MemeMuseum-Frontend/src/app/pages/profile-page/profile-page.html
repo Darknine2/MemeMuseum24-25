@@ -4,7 +4,7 @@
     <div class="avatar-wrapper"
       style="position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
       <div class="avatar-large">
-        <img [src]="'http://localhost:3000/' + profilePicture" alt="Avatar" style="display: block;">
+        <img [src]="imageService.getPathBackend(profilePicture)" alt="Avatar" style="display: block;">
       </div>
       @if (isMyProfile) {
       <button class="btn btn-secondary btn-sm" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;"

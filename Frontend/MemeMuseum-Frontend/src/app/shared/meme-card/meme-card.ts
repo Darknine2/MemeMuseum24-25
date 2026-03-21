@@ -6,6 +6,7 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../_services/auth-service/auth-service';
+import { ImageService } from '../../_services/image-service/image-service';
 
 type VoteType = 'up' | 'down' | null;
 
@@ -23,6 +24,7 @@ export class MemeCard implements OnInit, OnDestroy {
   memeService = inject(MemeBackendService);
   authService = inject(AuthService);
   router = inject(Router);
+  imageService = inject(ImageService);
 
   // Stato del modale di Login
   isAuthModalVisible: boolean = false;

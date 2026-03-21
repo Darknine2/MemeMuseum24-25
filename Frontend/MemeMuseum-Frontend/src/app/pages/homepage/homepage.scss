@@ -4,8 +4,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px;
-  min-height: calc(100vh - 56px);
+  padding: 0 16px 16px 16px;
+min-height: calc(100vh - 56px);
+}
+
+.sticky-header {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+  background-color: $surface-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 16px 8px 16px;
 }
 
 // ==== Barra di Ricerca ====
@@ -28,7 +42,7 @@
     padding: 8px 16px;
     font-size: 15px;
     font-family: inherit;
-    
+
     &:focus {
       outline: none;
     }
@@ -54,7 +68,7 @@
       background-color: rgba(255, 255, 255, 0.05);
       color: $text-primary;
     }
-    
+
     svg {
       stroke: currentColor;
     }
@@ -96,7 +110,8 @@
 
   &.active {
     color: $color-primary;
-    background-color: rgba(78, 178, 184, 0.08); /* $color-primary trasparentino */
+    background-color: rgba(78, 178, 184, 0.08);
+    /* $color-primary trasparentino */
     border-bottom-color: $color-primary;
 
     svg {
@@ -111,18 +126,24 @@
 }
 
 .filter-tab {
-  border-left: 1px solid rgba(255,255,255,0.05); /* Separator on desktop */
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  /* Separator on desktop */
 }
 
 // ==== Pannello Filtri ====
 .filter-panel {
+  position: absolute;
+  top: calc(100% - 8px); /* Subito sotto le altre barre ignorando il padding-bottom del contenitore */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); /* Ombra per effetto "tendina" sospesa */
   background-color: $surface-raised;
   border: 1px solid $surface-border;
   border-radius: $border-radius-card;
   padding: 16px;
-  margin-bottom: 24px;
   max-width: 640px;
-  width: 100%;
+  width: calc(100% - 32px); /* Tieni conto dello spazio laterale sui telefoni */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -135,7 +156,8 @@
     font-size: 14px;
     font-weight: 500;
 
-    input[type="text"], input[type="date"] {
+    input[type="text"],
+    input[type="date"] {
       padding: 10px 12px;
       border-radius: 8px;
       background-color: $surface-elevated;
@@ -153,7 +175,7 @@
   .date-filters {
     display: flex;
     gap: 16px;
-    
+
     label {
       flex: 1;
     }
@@ -169,7 +191,7 @@
       padding: 8px 16px;
       font-size: 14px;
     }
-    
+
     .btn-secondary {
       background-color: transparent;
       border: 1px solid $surface-border-alt;
@@ -178,7 +200,7 @@
       cursor: pointer;
 
       &:hover {
-        background-color: rgba(255,255,255,0.05);
+        background-color: rgba(255, 255, 255, 0.05);
       }
     }
   }
@@ -187,7 +209,14 @@
 // ==== Mobile responsive ====
 @media (max-width: 600px) {
   .homepage-container {
-    padding: 8px 0;
+    padding: 0 0 8px 0;
+  }
+
+  .sticky-header {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 8px 8px 4px 8px;
   }
 
   .sort-bar {
@@ -200,7 +229,7 @@
   .sort-tab {
     font-size: 12px;
     padding: 10px 4px;
-    flex-direction: column; // Metti l'icona sopra il testo
+    flex-direction: column; // mette l'icona sopra il testo
     gap: 4px;
 
     svg {

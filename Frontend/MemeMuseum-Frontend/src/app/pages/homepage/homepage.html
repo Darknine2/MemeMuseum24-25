@@ -1,7 +1,9 @@
 <div class="homepage-container">
 
-    <!-- Search Bar -->
-    <div class="search-bar-container">
+
+    <div class="sticky-header">
+      <!-- Search Bar -->
+      <div class="search-bar-container">
         <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="applySearch()"
             placeholder="Cerca meme per titolo o descrizione..." class="search-input">
         <button class="search-btn" aria-label="Cerca" (click)="applySearch()">
@@ -60,10 +62,7 @@
 
     @if (showFilters) {
     <div class="filter-panel">
-        <label>
-            <span>Tag (separati da virgola):</span>
-            <input type="text" [(ngModel)]="filters.tags" placeholder="es. gaming, cani, news">
-        </label>
+        <app-tag-field [(tagsToSearch)]="tagsToSearch"></app-tag-field>
 
         <div class="date-filters">
             <label>
@@ -82,6 +81,7 @@
         </div>
     </div>
     }
+    </div>
 
     @for (meme of memeList; track meme.id) {
     <app-meme-card [meme]="meme"></app-meme-card>

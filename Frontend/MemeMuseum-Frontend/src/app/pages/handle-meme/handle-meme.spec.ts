@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateMeme } from './create-meme';
+import { HandleMemeComponent } from './handle-meme';
 
-describe('CreateMeme', () => {
-  let component: CreateMeme;
-  let fixture: ComponentFixture<CreateMeme>;
+describe('HandleMemeComponent', () => {
+  let component: HandleMemeComponent;
+  let fixture: ComponentFixture<HandleMemeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateMeme]
+      imports: [HandleMemeComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CreateMeme);
+    fixture = TestBed.createComponent(HandleMemeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

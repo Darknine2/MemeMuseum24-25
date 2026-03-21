@@ -1,6 +1,7 @@
 <nav class="navbar">
   <div class="navbar-left">
     <a routerLink="/" class="logo" aria-label="Home">
+      <img src="logo.png" alt="MemeMuseum" style="width: 32px; height: 32px; object-fit: contain;">
       <span class="logo-text">MemeMuseum</span>
     </a>
   </div>
@@ -25,11 +26,14 @@
         stroke-linecap="round" stroke-linejoin="round" class="create-icon">
         <path d="M12 5v14M5 12h14" />
       </svg>
-      <span class="btn-label">Carica il tuo meme</span>
+      <span class="btn-label">Carica<span class="hide-on-tablet"> il tuo meme</span></span>
     </a>
 
     <div class="user-profile">
-      <a routerLink="/my-profile" style="text-decoration: none; cursor: pointer;">
+      <a routerLink="/my-profile" style="text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        @if (profilePicture) {
+        <img [src]="imageService.getPathBackend(profilePicture)" alt="Avatar" style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%; border: 2px solid #4eb2b8; padding: 2px; box-sizing: border-box;">
+        }
         <span class="username">@{{ authService.user() }}</span>
       </a>
       <button class="btn-icon" (click)="logout()" title="Logout" aria-label="Logout"

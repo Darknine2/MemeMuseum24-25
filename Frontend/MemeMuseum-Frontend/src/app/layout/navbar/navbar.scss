@@ -113,20 +113,20 @@
 }
 
 // ---- Mobile responsive ----
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .navbar {
     padding: 0 10px;
   }
 
   .logo .logo-text {
-    font-size: 18px;
+    display: none;
   }
 
   .navbar-right {
     gap: 8px;
   }
 
-  // Nasconde il nome utente su schermi piccoli
+
   .username {
     display: none;
   }
@@ -135,7 +135,11 @@
     display: none;
   }
 
-  // Rendi il bottone centrale più compatto
+
+
+}
+
+@media (max-width: 730px) {
   .btn-multicolor {
     padding: 6px;
     border-radius: 50%;
@@ -148,5 +152,12 @@
       width: 16px;
       height: 16px;
     }
+  }
+
+}
+
+@media (max-width: 1200px) {
+  .btn-create .hide-on-tablet {
+    display: none;
   }
 }

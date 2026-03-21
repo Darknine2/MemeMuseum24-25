@@ -8,6 +8,7 @@ import { MemeBackendService } from '../../_services/backend/meme-backend-service
 import { MemeCard } from '../../shared/meme-card/meme-card';
 import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 import { UpdateCredentialsModal } from './update-credentials-modal/update-credentials-modal';
+import { ImageService } from '../../_services/image-service/image-service';
 
 @Component({
   selector: 'app-profile-page',
@@ -22,6 +23,7 @@ export class ProfilePage implements OnInit {
   memeService = inject(MemeBackendService);
   router = inject(Router);
   route = inject(ActivatedRoute);
+  imageService = inject(ImageService);
 
   myMemes: Meme[] = [];
   totalUserMemes: number = 0;

@@ -252,8 +252,9 @@
 // ---- Mobile responsive ----
 @media (max-width: 600px) {
   .meme-card {
-    margin: 8px 0;
-    padding: 10px 12px;
+    width: 94%;
+    margin: 3% auto;
+    padding: 3% 4%;
   }
 
   .card-content .title {

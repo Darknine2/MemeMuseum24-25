@@ -1,5 +1,5 @@
-<div class="create-meme-container">
-  <div class="create-meme-card">
+<div class="handle-meme-container">
+  <div class="handle-meme-card">
 
     <div class="card-header">
       <h1>{{ isEditMode ? 'Modifica questo meme' : 'Carica il tuo meme' }}</h1>
@@ -67,27 +67,7 @@
       </div>
 
       <!-- Tag -->
-      <div class="form-group">
-        <label for="meme-tags">Tag <span class="label-hint">(max 5 — premi Enter o virgola per
-            aggiungere)</span></label>
-        <div class="tags-input-wrapper">
-          @for (tag of tags; track tag) {
-          <span class="tag-pill">
-            #{{ tag }}
-            <button type="button" class="tag-remove" (click)="removeTag(tag)" [attr.aria-label]="'Rimuovi tag ' + tag">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                stroke-linecap="round">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            </button>
-          </span>
-          }
-          @if (tags.length
-          < 5) { <input id="meme-tags" type="text" [(ngModel)]="tagInput" name="tagInput"
-            placeholder="es. gaming, funny..." (keydown)="onTagKeydown($event)" class="tag-input-field" />
-          }
-        </div>
-      </div>
+      <app-tag-field [(tagsToSearch)]="tags"></app-tag-field>
 
       <!-- Azioni -->
       <div class="form-actions">
