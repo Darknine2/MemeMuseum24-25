@@ -33,7 +33,9 @@
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src"]
+              "includePaths": [
+                "src"
+              ]
             }
           },
           "configurations": {
@@ -62,6 +64,14 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "allowedHosts": [
+              "mememuseale.duckdns.org",
+              ".duckdns.org"
+            ],
+            "buildTarget": "MemeMuseum-Frontend:build"
+          },
           "configurations": {
             "production": {
               "buildTarget": "MemeMuseum-Frontend:build:production"
