@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Meme } from './meme.type';
 import { MemeRequest } from './meme-request.type';
+import { GlobalBackendService } from '../global-backend-service/global-backend-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MemeBackendService {
-  url: string = 'http://localhost:3000/meme';
-  constructor(private http: HttpClient) { }
+  url: string;
+  constructor(private http: HttpClient, private global: GlobalBackendService) {
+    this.url = this.global.getPathBackend('meme');
+  }
 
   getAllMemes(page: number = 1, sortBy: string = '', filters: any = {}) {
     let url = `${this.url}?page=${page}`;

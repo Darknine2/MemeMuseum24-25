@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Comment } from './comment.type';
+import { GlobalBackendService } from '../global-backend-service/global-backend-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentBackendService {
-  private baseUrl = 'http://localhost:3000/meme';
+  private global = inject(GlobalBackendService);
+  private baseUrl = this.global.getPathBackend('meme');
   private http = inject(HttpClient);
 
   getCommentsByMeme(memeId: number) {

@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { GlobalBackendService } from '../backend/global-backend-service/global-backend-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImageService {
 
-  private readonly baseUrl = 'http://localhost:3000';
+  private global = inject(GlobalBackendService);
 
   getPathBackend(path: string | undefined | null): string {
-    if (!path) return '';
-    return `${this.baseUrl}/${path}`;
+    return this.global.getPathBackend(path);
   }
 
 

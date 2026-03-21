@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { GlobalBackendService } from '../global-backend-service/global-backend-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthBackendService {
-  private url = 'http://localhost:3000/auth';
+  private global = inject(GlobalBackendService);
+  private url = this.global.getPathBackend('auth');
   private http = inject(HttpClient);
 
   login(credentials: {username: string, password: string}): Observable<{token: string}> {
