@@ -26,12 +26,10 @@ export class Homepage implements OnInit {
   showFilters: boolean = false;
   searchQuery: string = '';
   filters = {
-    tags: '',
+    tags: [] as string[],
     startDate: '',
     endDate: ''
   };
-
-  tagsToSearch: string[] = [];
 
   ngOnInit(): void {
     this.loadMemes(this.currentPage, true);
@@ -52,8 +50,7 @@ export class Homepage implements OnInit {
   }
 
   resetFilters() {
-    this.filters = { tags: '', startDate: '', endDate: '' };
-    this.tagsToSearch = [];
+    this.filters = { tags: [], startDate: '', endDate: '' };
     this.searchQuery = '';
     this.applyFilters();
   }
@@ -63,7 +60,7 @@ export class Homepage implements OnInit {
     this.isLoading = true;
 
     // Unisco i filtri con la ricerca text-based
-    const allFilters = { ...this.filters, search: this.searchQuery, tags: this.tagsToSearch.join(',') };
+    const allFilters = { ...this.filters, search: this.searchQuery };
 
     this.memeService.getAllMemes(page, this.currentSort, allFilters).subscribe({
       next: (response: any) => {
@@ -93,7 +90,7 @@ export class Homepage implements OnInit {
   }
 
   // Listener sullo scroll della pagina
-  @HostListener('window:scroll', [])
+  @HostListener('window:scroll', []) // Quando l'utente scrolla, viene chiamata la funzione onScroll
   onScroll(): void {
     if (this.isLoading || this.currentPage >= this.totalPages) {
       return;

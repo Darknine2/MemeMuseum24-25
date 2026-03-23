@@ -32,7 +32,7 @@
     <div class="user-profile">
       <a routerLink="/my-profile" style="text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
         @if (profilePicture) {
-        <img [src]="imageService.getPathBackend(profilePicture)" alt="Avatar" style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%; border: 2px solid #4eb2b8; padding: 2px; box-sizing: border-box;">
+        <img [src]="globalBackendService.getPathBackend(profilePicture)" alt="Avatar" style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%; border: 2px solid #4eb2b8; padding: 2px; box-sizing: border-box;">
         }
         <span class="username">@{{ authService.user() }}</span>
       </a>

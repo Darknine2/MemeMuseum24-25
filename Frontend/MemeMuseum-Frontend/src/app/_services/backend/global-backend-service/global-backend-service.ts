@@ -9,6 +9,7 @@ export class GlobalBackendService {
 
   public getPathBackend(path: string | undefined | null): string {
     if (!path) return '';
+    if (path === 'logo.png') return 'logo.png';
     return `${this.baseUrl}/${path}`;
   }
 

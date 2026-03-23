@@ -8,7 +8,7 @@ import { MemeBackendService } from '../../_services/backend/meme-backend-service
 import { MemeCard } from '../../shared/meme-card/meme-card';
 import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 import { UpdateCredentialsModal } from './update-credentials-modal/update-credentials-modal';
-import { ImageService } from '../../_services/image-service/image-service';
+import { GlobalBackendService } from '../../_services/backend/global-backend-service/global-backend-service';
 
 @Component({
   selector: 'app-profile-page',
@@ -23,7 +23,8 @@ export class ProfilePage implements OnInit {
   memeService = inject(MemeBackendService);
   router = inject(Router);
   route = inject(ActivatedRoute);
-  imageService = inject(ImageService);
+  globalBackendService = inject(GlobalBackendService);
+
 
   myMemes: Meme[] = [];
   totalUserMemes: number = 0;
@@ -37,7 +38,7 @@ export class ProfilePage implements OnInit {
 
   targetUsername: string = '';
   isMyProfile: boolean = false;
-  profilePicture: string = 'images/profiles/default.png';
+  profilePicture: string = 'logo.png';
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -57,7 +58,7 @@ export class ProfilePage implements OnInit {
 
       // Sono il proprietario di questa bacheca? Permetti modifiche.
       this.isMyProfile = this.authService.isAuthenticated() && (this.targetUsername === this.authService.user());
-      
+
       this.fetchUserInfo();
       this.myMemes = []; // Reset feed se navighiamo da un profilo a un altro
       this.loadMyMemes(1, true);
@@ -67,7 +68,7 @@ export class ProfilePage implements OnInit {
   fetchUserInfo() {
     this.authBackend.getUserInfo(this.targetUsername).subscribe({
       next: (user) => {
-        this.profilePicture = user.profile_picture || 'images/profiles/default.png';
+        this.profilePicture = user.profile_picture || 'logo.png';
       },
       error: () => {
         alert("Utente non trovato");

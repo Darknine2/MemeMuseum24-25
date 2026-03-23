@@ -61,11 +61,11 @@ export class AuthService {
         const decodedToken = jwtDecode(token);
         const expiration = decodedToken.exp;
         if (expiration === undefined || Date.now() >= expiration * 1000) {
-          return false; // expiration not available or in the past
+          return false; // scadenza non disponibile o passata
         } else {
-          return true; //token not expired
+          return true; //token non scaduto
         }
-      } catch (error) { // invalid token
+      } catch (error) { // token non valido
         return false;
       }
     }

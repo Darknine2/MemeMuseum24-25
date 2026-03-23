@@ -23,10 +23,9 @@ export class MemeBackendService {
       url += `&search=${encodeURIComponent(filters.search)}`;
     }
 
-    // tags is expected to be a string like "coding, funny"
-    if (filters.tags) {
-      const tagsArray = filters.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t);
-      tagsArray.forEach((tag: string) => {
+
+    if (filters.tags && Array.isArray(filters.tags)) {
+      filters.tags.forEach((tag: string) => {
         url += `&tags=${encodeURIComponent(tag)}`;
       });
     }

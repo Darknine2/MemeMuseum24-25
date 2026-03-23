@@ -31,9 +31,15 @@ export class MemePage implements OnInit {
   errorMessage: string = '';
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadMeme(id);
-    this.loadComments(id);
+    //paramMap è un Observable che notifica quando i parametri cambiano
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (id) {
+        this.loadingMeme = true;
+        this.loadMeme(id);
+        this.loadComments(id);
+      }
+    });
   }
 
   loadMeme(id: number) {

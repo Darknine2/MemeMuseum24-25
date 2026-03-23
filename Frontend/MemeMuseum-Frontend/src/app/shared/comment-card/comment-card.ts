@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Comment } from '../../_services/backend/comment-backend-service/comment.type';
 import { AuthService } from '../../_services/auth-service/auth-service';
+import { GlobalBackendService } from '../../_services/backend/global-backend-service/global-backend-service';
 
 @Component({
   selector: 'app-comment-card',
@@ -15,6 +16,7 @@ export class CommentCard {
   @Output() deleted = new EventEmitter<number>();
 
   authService = inject(AuthService);
+  backendService = inject(GlobalBackendService);
 
   get isOwner(): boolean {
     return this.authService.user() === this.comment.userId;

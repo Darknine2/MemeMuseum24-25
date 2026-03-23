@@ -1,5 +1,5 @@
 import { Meme, Tag, User, database, Vote } from "../models/Database.js";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import fs from "fs/promises";
 import path from "path";
 import { TagController } from "./TagController.js";
@@ -52,8 +52,8 @@ export class MemeController {
         const limit = 10; // Carica 10 meme alla volta
         const offset = (page - 1) * limit;
 
-        const whereClause = MemeController._buildWhereClause(queryParams);
-        const includeClause = MemeController._buildTagFilter(queryParams, currentUsername);
+        const whereClause = await MemeController._buildWhereClause(queryParams);
+        const includeClause = MemeController._getBaseIncludeClause(currentUsername);
         const orderClause = MemeController._buildOrderClause(queryParams);
 
         const { count, rows } = await Meme.findAndCountAll({
@@ -62,7 +62,7 @@ export class MemeController {
             limit: limit,
             offset: offset,
             order: orderClause,
-            distinct: true // FONDAMENTALE quando si usa findAndCountAll con gli include (JOIN)
+            distinct: true
         });
 
         // Restituiamo un oggetto strutturato con i metadati per il frontend
@@ -75,7 +75,7 @@ export class MemeController {
     }
 
     // Helper Functions per generazione query parametri
-    static _buildWhereClause(queryParams) {
+    static async _buildWhereClause(queryParams) {
         const whereClause = {};
 
         // Filtro di Ricerca (Titolo o Descrizione)
@@ -85,6 +85,8 @@ export class MemeController {
                 { description: { [Op.iLike]: `%${queryParams.search}%` } }
             ];
         }
+
+
 
         // Filtro per Intervallo di Date (es. startDate e endDate)
         if (queryParams.startDate || queryParams.endDate) {
@@ -102,27 +104,37 @@ export class MemeController {
                 whereClause.created_at[Op.lte] = endDate;
             }
         }
+
+        // Filtro per i Tag
+        if (queryParams.tags) {
+            const tagsArray = Array.isArray(queryParams.tags) ? queryParams.tags : [queryParams.tags];
+
+            // Trova gli ID dei meme che hanno almeno uno dei tag richiesti
+            const memesWithTags = await Meme.findAll({
+                attributes: ['id'],
+                include: [{
+                    model: Tag,
+                    as: 'Tags',
+                    attributes: [],
+                    where: {
+                        name: {
+                            [Op.in]: tagsArray
+                        }
+                    }
+                }]
+            });
+
+            const memeIds = memesWithTags.map(m => m.id);
+
+            whereClause.id = {
+                [Op.in]: memeIds
+            };
+        }
+
         return whereClause;
     }
 
-    static _buildTagFilter(queryParams, username) {
 
-        const includeClause = MemeController.getBaseIncludeClause(username);
-
-        if (queryParams.tags) {
-            // Con URL ?tags=coding&tags=funny, req.query.tags è già un array.
-            // Con URL ?tags=coding è solo una stringa, quindi forziamo l'array.
-            const tagsArray = Array.isArray(queryParams.tags) ? queryParams.tags : [queryParams.tags];
-
-            // Forza INNER JOIN per restituire solo i meme che hanno *almeno uno* di questi tag
-            includeClause[0].where = {
-                name: {
-                    [Op.in]: tagsArray
-                }
-            };
-        }
-        return includeClause;
-    }
 
 
     static _buildOrderClause(queryParams) {
@@ -146,7 +158,7 @@ export class MemeController {
         return orderClause;
     }
 
-    static getBaseIncludeClause(currentUsername = null) {
+    static _getBaseIncludeClause(currentUsername = null) {
         const includeClause = [
             {
                 model: Tag,
@@ -175,7 +187,7 @@ export class MemeController {
 
     // READ BY ID
     static async getMemeById(memeId, currentUsername = null) {
-        const includeClause = MemeController.getBaseIncludeClause(currentUsername);
+        const includeClause = MemeController._getBaseIncludeClause(currentUsername);
 
         const meme = await Meme.findOne({
             where: { id: memeId },
@@ -215,7 +227,7 @@ export class MemeController {
         }
 
         // Ricarichiamo con le nuove join
-        await meme.reload({ include: MemeController.getBaseIncludeClause() });
+        await meme.reload({ include: MemeController._getBaseIncludeClause() });
         return meme;
     }
 
@@ -260,7 +272,7 @@ export class MemeController {
         const limit = 10; // Carica 10 meme alla volta
         const offset = (page - 1) * limit;
 
-        const includeClause = MemeController.getBaseIncludeClause(username);
+        const includeClause = MemeController._getBaseIncludeClause(username);
 
         const { count, rows } = await Meme.findAndCountAll({
             where: { userId: username },

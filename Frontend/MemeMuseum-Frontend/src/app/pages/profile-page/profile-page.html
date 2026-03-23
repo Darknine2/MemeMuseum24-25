@@ -4,7 +4,7 @@
     <div class="avatar-wrapper"
       style="position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
       <div class="avatar-large">
-        <img [src]="imageService.getPathBackend(profilePicture)" alt="Avatar" style="display: block;">
+        <img [src]="globalBackendService.getPathBackend(profilePicture)" alt="Avatar" style="display: block;">
       </div>
       @if (isMyProfile) {
       <button class="btn btn-secondary btn-sm" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;"
@@ -75,7 +75,6 @@
       <div class="feed-header">
         @if (isMyProfile) {
         <h3>I tuoi Meme</h3>
-        <a routerLink="/create-meme" class="btn btn-secondary">Nuovo</a>
         } @else {
         <h3>Meme caricati dall'utente</h3>
         }

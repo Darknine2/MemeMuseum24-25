@@ -28,7 +28,7 @@ export function createModel(database) {
         profile_picture: {
             type: DataTypes.STRING,
             allowNull: true,
-            defaultValue: "images/profiles/default.png"
+            defaultValue: "logo.png"
         }
     }, { timestamps: false });
 }

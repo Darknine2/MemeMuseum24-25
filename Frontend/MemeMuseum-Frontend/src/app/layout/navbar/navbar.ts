@@ -5,7 +5,7 @@ import { MemeBackendService } from '../../_services/backend/meme-backend-service
 import { Meme } from '../../_services/backend/meme-backend-service/meme.type';
 import { FeedbackService } from '../../_services/feedback-service/feedback.service';
 import { AuthBackendService } from '../../_services/backend/auth-backend-service/auth-backend-service';
-import { ImageService } from '../../_services/image-service/image-service';
+import { GlobalBackendService } from '../../_services/backend/global-backend-service/global-backend-service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +18,7 @@ export class Navbar {
   authBackendService = inject(AuthBackendService);
   memeService = inject(MemeBackendService);
   feedbackService = inject(FeedbackService);
-  imageService = inject(ImageService);
+  globalBackendService = inject(GlobalBackendService);
 
   dailyMeme: Meme | null = null;
   profilePicture: string | null = null;

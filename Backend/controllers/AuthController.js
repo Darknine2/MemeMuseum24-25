@@ -134,7 +134,7 @@ export class AuthController {
             throw error;
         }
 
-        if (user.profile_picture && user.profile_picture !== "images/profiles/default.png") {
+        if (user.profile_picture && user.profile_picture !== "logo.png") {
             await PhotoService.deletePhoto("profiles", username, user.profile_picture);
         }
 

@@ -5,8 +5,8 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
 import { MemeRequest } from '../../_services/backend/meme-backend-service/meme-request.type';
 import { FeedbackService } from '../../_services/feedback-service/feedback.service';
-import { ImageService } from '../../_services/image-service/image-service';
 import { TagField } from '../../shared/tag-field/tag-field';
+import { GlobalBackendService } from '../../_services/backend/global-backend-service/global-backend-service';
 
 @Component({
   selector: 'app-handle-meme',
@@ -19,7 +19,7 @@ export class HandleMemeComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private feedbackService = inject(FeedbackService);
-  private imageService = inject(ImageService);
+  private globalBackendService = inject(GlobalBackendService);
 
   // Form fields
   title: string = '';
@@ -42,13 +42,13 @@ export class HandleMemeComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.editMemeId = parseInt(idParam, 10);
-      
+
       this.memeService.getMemeById(this.editMemeId).subscribe({
         next: (meme) => {
           this.title = meme.title;
           this.description = meme.description || '';
           this.tags = meme.Tags?.map(t => t.name) || [];
-          this.imagePreviewUrl = this.imageService.getPathBackend(meme.image_path);
+          this.imagePreviewUrl = this.globalBackendService.getPathBackend(meme.image_path);
         },
         error: () => {
           this.feedbackService.show("Impossibile caricare il meme da modificare", "error");
@@ -75,6 +75,8 @@ export class HandleMemeComponent implements OnInit {
 
     // Generate the local preview URL
     const reader = new FileReader();
+
+    // Quando il file viene letto, imposta l'anteprima
     reader.onload = () => {
       this.imagePreviewUrl = reader.result as string;
     };
@@ -138,7 +140,7 @@ export class HandleMemeComponent implements OnInit {
       this.memeService.updateMeme(this.editMemeId, memeRequest).subscribe({
         next: () => {
           this.feedbackService.show('Meme aggiornato con successo!', 'success');
-          this.router.navigate(['/home']);
+          this.router.navigate(['/meme', this.editMemeId]);
         },
         error: (err) => {
           this.errorMessage = err?.error?.message || 'Errore durante l\'aggiornamento del meme.';

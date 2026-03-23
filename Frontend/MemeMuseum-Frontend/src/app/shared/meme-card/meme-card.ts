@@ -6,7 +6,8 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../_services/auth-service/auth-service';
-import { ImageService } from '../../_services/image-service/image-service';
+import { GlobalBackendService } from '../../_services/backend/global-backend-service/global-backend-service';
+import { FeedbackService } from '../../_services/feedback-service/feedback.service';
 
 type VoteType = 'up' | 'down' | null;
 
@@ -24,7 +25,8 @@ export class MemeCard implements OnInit, OnDestroy {
   memeService = inject(MemeBackendService);
   authService = inject(AuthService);
   router = inject(Router);
-  imageService = inject(ImageService);
+  globalBackendService = inject(GlobalBackendService);
+  feedbackService = inject(FeedbackService);
 
   // Stato del modale di Login
   isAuthModalVisible: boolean = false;
@@ -37,24 +39,24 @@ export class MemeCard implements OnInit, OnDestroy {
   private voteSubscription!: Subscription;
 
   ngOnInit() {
-    console.log(this.meme?.Author?.profile_picture);
+
     // Imposta il voto iniziale se l'utente ha già votato questo meme
     if (this.meme?.Votes && this.meme.Votes.length > 0) {
       const userVote = this.meme.Votes[0].vote;
       this.currentVote = userVote === true ? 'up' : 'down';
     }
 
-    // Applichiamo un "Debounce": attenderà che l'utente stia fermo per 1500 millisecondi 
+    // Applichiamo un "Debounce": attenderà che l'utente stia fermo per 500 millisecondi 
     // prima di lasciar passare in uscita l'ultimo valore cliccato
     this.voteSubscription = this.voteSubject.pipe(
-      debounceTime(1500)
+      debounceTime(500)
     ).subscribe((finalVote) => {
       this.sendVoteToBackend(finalVote);
     });
   }
 
   ngOnDestroy() {
-    // Evitiamo memory leaks spegnendo la subscription quando la card sparisce
+    // Evitiamo memory leaks spegnendo la subscription quando la card viene distrutta
     if (this.voteSubscription) {
       this.voteSubscription.unsubscribe();
     }
@@ -79,7 +81,7 @@ export class MemeCard implements OnInit, OnDestroy {
         this.meme.votes_count = (this.meme.votes_count || 0) - 2;
       } else if (this.currentVote === 'down' && type === 'up') {
         this.meme.votes_count = (this.meme.votes_count || 0) + 2;
-      } else if (!this.currentVote) {
+      } else if (!this.currentVote) { //voto nuovo
         if (type === 'up') this.meme.votes_count = (this.meme.votes_count || 0) + 1;
         if (type === 'down') this.meme.votes_count = (this.meme.votes_count || 0) - 1;
       }
@@ -157,11 +159,20 @@ export class MemeCard implements OnInit, OnDestroy {
     if (!this.meme?.id) return;
     this.memeService.deleteMeme(this.meme.id).subscribe({
       next: () => {
+        this.feedbackService.show('Meme eliminato con successo!', 'success');
         this.showDeleteModal = false;
-        window.location.reload(); 
+
+        if (this.isStandalone) {
+          this.router.navigate(['/home']);
+        } else {
+          const currentUrl = this.router.url;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate([currentUrl]);
+          });
+        }
       },
       error: (e) => {
-        alert("Errore durante l'eliminazione: " + (e.error?.message || e.message));
+        this.feedbackService.show('Errore durante l\'eliminazione: ' + (e.error?.message || e.message), 'error');
         this.showDeleteModal = false;
       }
     });

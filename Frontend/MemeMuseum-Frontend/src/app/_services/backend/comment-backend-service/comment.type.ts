@@ -6,5 +6,6 @@ export interface Comment {
     created_at?: string | Date;
     User?: {
         username: string;
+        profile_picture: string;
     };
 }

@@ -30,7 +30,7 @@ export class CommentController {
     static async getCommentsByMeme(memeId) {
         const comments = await Comment.findAll({
             where: { memeId: memeId },
-            include: [{ model: User, as: 'User', attributes: ['username'] }]
+            include: [{ model: User, as: 'User', attributes: ['username', 'profile_picture'] }]
         });
         return comments;
     }
