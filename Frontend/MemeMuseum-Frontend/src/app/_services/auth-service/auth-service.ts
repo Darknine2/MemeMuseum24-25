@@ -15,7 +15,7 @@ export class AuthService {
     isAuthenticated: this.verifyToken(this.getToken())
   })
 
-  user = computed(() => this.authState().username);
+  user = computed(() => this.authState().username); //signal di sola lettura che dipende da authState
   token = computed(() => this.authState().token);
   isAuthenticated = computed(() => this.authState().isAuthenticated);
 

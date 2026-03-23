@@ -36,8 +36,7 @@ export const authorGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   }
 
   return memeService.getMemeById(memeId).pipe(
-    map(meme => {
-      // Verifichiamo la proprietà con il logged-in user estraendolo da AuthService
+    map(meme => { // Trasforma l'Observable<Meme> in Observable<boolean>
       const isOwner = meme.Author?.username === authService.getUser();
       if (isOwner) {
         return true;
@@ -47,7 +46,7 @@ export const authorGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     }),
     catchError(() => {
       router.navigate(['/home']);
-      return of(false); // of() wrappa un normale boolean restituendoci un Observable di emergenza
+      return of(false); //wrapper per restituire comunuqe un Observable<boolean>
     })
   );
 };

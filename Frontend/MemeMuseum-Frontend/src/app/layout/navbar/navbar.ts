@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../_services/auth-service/auth-service';
 import { MemeBackendService } from '../../_services/backend/meme-backend-service/meme-backend-service';
@@ -23,11 +23,18 @@ export class Navbar {
   dailyMeme: Meme | null = null;
   profilePicture: string | null = null;
 
-  constructor(private router: Router) { }
-
+  constructor(private router: Router) {
+    effect(() => {
+      const username = this.authService.user();
+      if (username) {
+        this.getProfilePicture();
+      } else {
+        this.profilePicture = null;
+      }
+    });
+  }
 
   ngOnInit() {
-    this.getProfilePicture();
   }
 
   goToDailyMeme() {
@@ -57,7 +64,7 @@ export class Navbar {
 
     this.authBackendService.getUserInfo(this.authService.user()!).subscribe({
       next: (userInfo) => {
-        this.profilePicture = userInfo.profile_picture;
+        this.profilePicture = userInfo.profile_picture || 'logo.png';
       },
       error: (error) => {
         console.error(error);
