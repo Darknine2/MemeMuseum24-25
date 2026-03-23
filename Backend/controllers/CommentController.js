@@ -23,7 +23,12 @@ export class CommentController {
         meme.comment_count++;
         await meme.save();
 
-        return newComment;
+        // Ricarichiamo il commento per includere le informazioni dell'utente (foto profilo)
+        const commentWithUser = await Comment.findByPk(newComment.id, {
+            include: [{ model: User, as: 'User', attributes: ['username', 'profile_picture'] }]
+        });
+
+        return commentWithUser;
     }
 
     // READ: Ottieni i commenti di un meme specifico
@@ -45,7 +50,13 @@ export class CommentController {
         }
 
         await comment.update({ text: updateData.text });
-        return comment;
+        
+        // Ricarichiamo il commento per includere le informazioni dell'utente
+        const updatedComment = await Comment.findByPk(comment.id, {
+            include: [{ model: User, as: 'User', attributes: ['username', 'profile_picture'] }]
+        });
+        
+        return updatedComment;
     }
 
     // DELETE BY ID: Elimina un commento

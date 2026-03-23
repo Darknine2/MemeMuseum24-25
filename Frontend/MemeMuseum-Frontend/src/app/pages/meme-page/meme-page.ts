@@ -70,8 +70,6 @@ export class MemePage implements OnInit {
 
     this.commentService.createComment(this.meme.id, this.newCommentText.trim()).subscribe({
       next: (comment) => {
-        // Aggiungo lo username corrente localmente per non fare un reload
-        (comment as any).User = { username: this.authService.user() };
         this.comments.unshift(comment);
         this.newCommentText = '';
         this.isSubmittingComment = false;
