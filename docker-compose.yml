@@ -30,6 +30,7 @@ services:
     volumes:
       - ./Backend:/app
       - /app/node_modules
+      - ./Backend/uploads:/app/uploads
     restart: unless-stopped
 
   frontend:
